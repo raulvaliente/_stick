@@ -1,0 +1,19 @@
+<Window x:Class="_stick.CollectionNameWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Renombrar biblioteca" Icon="/_stick;component/Assets/stick.ico"
+        Width="440" SizeToContent="Height" ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+        FontFamily="{StaticResource InterfaceFont}" FontSize="14"
+        Background="#211E2B" Foreground="#FFF8E6">
+    <StackPanel Margin="22">
+        <Label Content="Nombre de la biblioteca" Target="{Binding ElementName=NameInput}"
+               FontWeight="Bold" Foreground="#FFE275" Padding="0,0,0,8"/>
+        <TextBox x:Name="NameInput" Padding="7,5" AutomationProperties.Name="Nombre de la biblioteca"/>
+        <TextBlock x:Name="DefaultNameHint" TextWrapping="Wrap" Margin="0,8,0,16"/>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Cancelar" IsCancel="True" Margin="0,0,8,0"/>
+            <Button Content="Guardar" IsDefault="True" Click="Save_Click"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

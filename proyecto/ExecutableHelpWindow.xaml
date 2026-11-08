@@ -1,0 +1,52 @@
+<Window x:Class="_stick.ExecutableHelpWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Encontrar el ejecutable de una aplicación" Icon="/_stick;component/Assets/stick.ico"
+        Width="610" Height="540" MinWidth="390" MinHeight="320"
+        FontFamily="{StaticResource InterfaceFont}" FontSize="14"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False">
+    <DockPanel Margin="20">
+        <Button DockPanel.Dock="Bottom" Content="Cerrar" HorizontalAlignment="Right"
+                Margin="0,12,0,0" IsCancel="True"/>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="0,0,12,0">
+                <TextBlock Text="Encontrar un archivo .exe" FontSize="22" FontWeight="SemiBold"
+                           Margin="0,0,0,12" TextWrapping="Wrap"/>
+
+                <TextBlock FontWeight="Bold" Text="1. Desde el Administrador de tareas" TextWrapping="Wrap"/>
+                <TextBlock TextWrapping="Wrap" Margin="0,5,0,14">
+                    Abre la aplicación que quieres vincular. Pulsa <Bold>Ctrl + Mayús + Esc</Bold>.
+                    En <Bold>Procesos</Bold>, busca la aplicación y despliega su grupo si aparece agrupada.
+                    Haz clic derecho sobre el proceso de la aplicación y elige <Bold>Abrir ubicación del archivo</Bold>.
+                    Si hace falta, usa <Bold>Ir a detalles</Bold> y abre la ubicación desde esa pestaña.
+                    El Explorador normalmente resaltará el ejecutable.
+                </TextBlock>
+
+                <TextBlock FontWeight="Bold" Text="2. Desde Inicio o un acceso directo" TextWrapping="Wrap"/>
+                <TextBlock TextWrapping="Wrap" Margin="0,5,0,14">
+                    Busca la aplicación en Inicio y elige <Bold>Abrir ubicación del archivo</Bold> si aparece.
+                    Si llegas a un acceso directo, haz clic derecho sobre él, entra en <Bold>Propiedades</Bold>
+                    y consulta <Bold>Destino</Bold> en la pestaña <Bold>Acceso directo</Bold>.
+                    Si el destino incluye opciones después de la ruta, copia solo la parte que acaba en .exe.
+                    Si el acceso directo apunta a un lanzador, vuelve al Administrador de tareas con la aplicación abierta.
+                </TextBlock>
+
+                <TextBlock FontWeight="Bold" Text="3. Añádelo a _stick" TextWrapping="Wrap"/>
+                <TextBlock TextWrapping="Wrap" Margin="0,5,0,14">
+                    Vuelve a <Bold>Añadir aplicación…</Bold>. Selecciona el archivo .exe o pega su ruta completa
+                    en <Bold>Nombre de archivo</Bold>. Por ejemplo, PyCharm suele tener <Bold>pycharm64.exe</Bold>
+                    dentro de su carpeta <Bold>bin</Bold>.
+                    Si una actualización mueve el ejecutable, usa <Bold>Cambiar ejecutable…</Bold> para conservar tus notas.
+                </TextBlock>
+
+                <TextBlock FontWeight="SemiBold" Text="Si la ubicación no aparece"/>
+                <TextBlock TextWrapping="Wrap" Margin="0,5,0,0">
+                    Puedes buscar en <Bold>%ProgramFiles%</Bold>, <Bold>%ProgramFiles(x86)%</Bold>
+                    o <Bold>%LOCALAPPDATA%\Programs</Bold> pegando la ruta en el Explorador.
+                    Algunas aplicaciones de Microsoft Store tienen una carpeta protegida y puede que Windows
+                    no permita seleccionar o detectar su ejecutable.
+                </TextBlock>
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</Window>

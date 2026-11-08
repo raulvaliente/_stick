@@ -1,0 +1,15 @@
+<Application x:Class="_stick.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             ShutdownMode="OnExplicitShutdown">
+    <Application.Resources>
+        <FontFamily x:Key="InterfaceFont">Consolas</FontFamily>
+        <Style TargetType="Button">
+            <Setter Property="FontFamily" Value="{StaticResource InterfaceFont}"/>
+            <Setter Property="Padding" Value="9,4"/>
+        </Style>
+        <Style TargetType="ToolTip">
+            <Setter Property="FontFamily" Value="{StaticResource InterfaceFont}"/>
+        </Style>
+    </Application.Resources>
+</Application>
