@@ -1,0 +1,11 @@
+<Window x:Class="_stick.TrashDropWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:_stick"
+        Title="Papelera"
+        WindowStyle="None" ResizeMode="NoResize" WindowStartupLocation="Manual"
+        ShowActivated="False" ShowInTaskbar="False" Topmost="True"
+        FontFamily="{StaticResource InterfaceFont}"
+        UseLayoutRounding="True" SnapsToDevicePixels="True">
+    <local:TrashDropVisual x:Name="DropTarget"/>
+</Window>

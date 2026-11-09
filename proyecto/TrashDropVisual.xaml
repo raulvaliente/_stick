@@ -1,0 +1,72 @@
+<UserControl x:Class="_stick.TrashDropVisual" x:Name="Target"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             UseLayoutRounding="True" SnapsToDevicePixels="True">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/_stick;component/PixelTheme.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <DrawingBrush x:Key="StripePattern" TileMode="Tile" ViewportUnits="Absolute" Viewport="0,0,12,6"
+                          ViewboxUnits="Absolute" Viewbox="0,0,12,6">
+                <DrawingBrush.Drawing>
+                    <GeometryDrawing Brush="#FFE275" Geometry="M 0,0 H 5 V 2 H 7 V 4 H 9 V 6 H 4 V 4 H 2 V 2 H 0 Z"/>
+                </DrawingBrush.Drawing>
+            </DrawingBrush>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Border BorderThickness="2">
+        <Border.Style>
+            <Style TargetType="Border">
+                <Setter Property="Background" Value="#262132"/>
+                <Setter Property="BorderBrush" Value="{StaticResource Yellow}"/>
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsHighlighted, ElementName=Target}" Value="True">
+                        <Setter Property="Background" Value="#432C38"/>
+                        <Setter Property="BorderBrush" Value="#FFAE9D"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Border.Style>
+        <Grid>
+            <Rectangle Height="5" VerticalAlignment="Top" Fill="{StaticResource StripePattern}" Opacity=".85"/>
+            <Rectangle Height="5" VerticalAlignment="Bottom" Fill="{StaticResource StripePattern}" Opacity=".85"/>
+            <Viewbox Margin="8,9">
+                <Grid Width="170" Height="62">
+                    <Border Width="54" Height="54" HorizontalAlignment="Left" VerticalAlignment="Center"
+                            Background="#1B1824" BorderBrush="#68535B" BorderThickness="1">
+                        <Viewbox Width="40" Height="40">
+                            <Canvas Width="28" Height="28" RenderOptions.EdgeMode="Aliased">
+                                <Path Fill="#4A3446"
+                                      Data="M 8,3 H 18 V 6 H 25 V 12 H 23 V 25 H 7 V 23 H 5 V 12 H 3 V 6 H 8 Z"/>
+                                <Path Fill="#EFB249"
+                                      Data="M 6,12 H 22 V 22 H 21 V 24 H 7 V 22 H 6 Z"/>
+                                <Path Fill="#FFF4C6" Data="M 5,7 H 10 V 4 H 18 V 7 H 23 V 10 H 5 Z"/>
+                                <Path Fill="#FFE275" Data="M 7,12 H 21 V 15 H 7 Z"/>
+                                <Path Fill="#6E4B41" Data="M 9,16 H 11 V 21 H 9 Z M 13,16 H 15 V 21 H 13 Z M 17,16 H 19 V 21 H 17 Z"/>
+                            </Canvas>
+                        </Viewbox>
+                    </Border>
+                    <StackPanel Margin="63,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="PAPELERA" FontFamily="{StaticResource PixelFont}" FontSize="22"
+                                   Foreground="{StaticResource Yellow}"/>
+                        <TextBlock FontFamily="{StaticResource InterfaceFont}" FontSize="11" Margin="0,3,0,0">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Text" Value="Suelta aquí"/>
+                                    <Setter Property="Foreground" Value="#D0C6DA"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsHighlighted, ElementName=Target}" Value="True">
+                                            <Setter Property="Text" Value="Suelta la nota"/>
+                                            <Setter Property="Foreground" Value="#FFF8E6"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </StackPanel>
+                </Grid>
+            </Viewbox>
+        </Grid>
+    </Border>
+</UserControl>

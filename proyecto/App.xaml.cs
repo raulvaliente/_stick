@@ -27,21 +27,58 @@ public partial class App : Application
     private ProcessMonitor? monitor;
     private Forms.NotifyIcon? tray;
     private System.Drawing.Icon? trayIcon;
-    private Forms.ContextMenuStrip? menu;
-    private System.Drawing.Font? trayFont;
     private CollectionsWindow? settings;
     private Mutex? instance;
+    private EventWaitHandle? openPanelSignal;
+    private RegisteredWaitHandle? openPanelRegistration;
     private bool dirty;
 
     internal List<NoteCollection> Collections { get; private set; } = [];
+    internal TrashLayout TrashLayout { get; private set; } = new();
+    internal event EventHandler? TrashChanged;
+
+    internal bool SetTrashLayout(TrashLayout layout)
+    {
+        try
+        {
+            var normalized = layout.Normalize();
+            store.SaveTrashLayout(normalized);
+            TrashLayout = normalized;
+            return true;
+        }
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException)
+        {
+            NotifyError("No se pudieron guardar los ajustes de la papelera.", error);
+            return false;
+        }
+    }
+
+    internal RunningApplication[] FindOpenApplications() => monitor!.FindOpenApplications();
+
+    internal bool HasSeenAppPickerTutorial() => store.HasSeenAppPickerTutorial();
+
+    internal void MarkAppPickerTutorialSeen()
+    {
+        try
+        {
+            store.MarkAppPickerTutorialSeen();
+        }
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException)
+        {
+            NotifyError("No se pudo guardar el estado del tutorial.", error);
+        }
+    }
 
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
         using var identity = WindowsIdentity.GetCurrent();
-        instance = new Mutex(false, $@"Global\_stick-{identity.User?.Value}", out var firstInstance);
+        var userId = identity.User?.Value;
+        openPanelSignal = new EventWaitHandle(false, EventResetMode.AutoReset, $@"Local\_stick-open-{userId}");
+        instance = new Mutex(false, $@"Global\_stick-{userId}", out var firstInstance);
         if (!firstInstance)
         {
+            openPanelSignal.Set();
             Shutdown();
             return;
         }
@@ -59,14 +96,24 @@ public partial class App : Application
         }
 
         CreateTray();
+        try
+        {
+            TrashLayout = store.LoadTrashLayout();
+        }
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException or JsonException)
+        {
+            NotifyError("Se usará la configuración predeterminada de la papelera.", error);
+        }
+
         saveTimer.Tick += (_, _) => Flush();
+        EnsureBuiltInCollection();
         monitor = new ProcessMonitor();
         scanTimer.Tick += (_, _) => Scan();
         Scan();
         scanTimer.Start();
-
-        if (!e.Args.Contains("--background", StringComparer.OrdinalIgnoreCase))
-            OpenSettings();
+        OpenSettings(focusWelcome: true);
+        openPanelRegistration = ThreadPool.RegisterWaitForSingleObject(openPanelSignal,
+            (_, _) => QueueOpenSettings(), null, Timeout.Infinite, executeOnlyOnce: false);
     }
 
     protected override void OnSessionEnding(SessionEndingCancelEventArgs e)
@@ -81,10 +128,29 @@ public partial class App : Application
         Flush();
         tray?.Dispose();
         trayIcon?.Dispose();
-        menu?.Dispose();
-        trayFont?.Dispose();
+        openPanelRegistration?.Unregister(null);
+        openPanelSignal?.Dispose();
         instance?.Dispose();
         base.OnExit(e);
+    }
+
+    private NoteCollection? BuiltInCollection => Collections.FirstOrDefault(collection => collection.IsBuiltIn);
+
+    private void EnsureBuiltInCollection()
+    {
+        if (BuiltInCollection is not null)
+            return;
+
+        Collections.Insert(0, new NoteCollection
+        {
+            Executable = "",
+            IsBuiltIn = true,
+            Automatic = false,
+            Notes = [new Note { IsWelcome = true, Color = "#FFE275" }]
+        });
+
+        if (!TrySave())
+            dirty = true;
     }
 
     internal NoteCollection? AddCollection(string path)
@@ -101,8 +167,32 @@ public partial class App : Application
         return null;
     }
 
+    internal bool RemoveCollection(NoteCollection collection)
+    {
+        if (collection.IsBuiltIn)
+            return false;
+
+        var index = Collections.IndexOf(collection);
+        if (index < 0)
+            return false;
+
+        Collections.RemoveAt(index);
+        if (!TrySave())
+        {
+            Collections.Insert(index, collection);
+            return false;
+        }
+
+        running.Remove(collection.Executable);
+        CloseCollection(collection);
+        return true;
+    }
+
     internal bool ReplaceExecutable(NoteCollection collection, string path)
     {
+        if (collection.IsBuiltIn)
+            return false;
+
         var oldPath = collection.Executable;
         if (StringComparer.OrdinalIgnoreCase.Equals(oldPath, path))
             return true;
@@ -123,6 +213,9 @@ public partial class App : Application
 
     internal bool RenameCollection(NoteCollection collection, string name)
     {
+        if (collection.IsBuiltIn)
+            return false;
+
         var oldName = collection.CustomName;
         var newName = string.IsNullOrWhiteSpace(name) ? null : name.Trim();
         if (oldName == newName)
@@ -148,6 +241,9 @@ public partial class App : Application
 
     internal bool ToggleAutomatic(NoteCollection collection)
     {
+        if (collection.IsBuiltIn)
+            return false;
+
         collection.Automatic = !collection.Automatic;
         if (!TrySave())
         {
@@ -219,57 +315,62 @@ public partial class App : Application
 
     private void CreateTray()
     {
-        trayFont = new System.Drawing.Font("Consolas", 9);
-        menu = new Forms.ContextMenuStrip { Font = trayFont };
-        menu.Items.Add("Aplicaciones…", null, (_, _) => OpenSettings());
-        var openMenu = new Forms.ToolStripMenuItem("Abrir notas");
-        openMenu.DropDown.Font = trayFont;
-        menu.Items.Add(openMenu);
-        menu.Items.Add(new Forms.ToolStripSeparator());
-        menu.Items.Add("Salir de _stick", null, (_, _) =>
-        {
-            if (Flush())
-                Shutdown();
-        });
-        menu.Opening += (_, _) =>
-        {
-            while (openMenu.DropDownItems.Count > 0)
-                openMenu.DropDownItems[0].Dispose();
-
-            foreach (var collection in Collections)
-                openMenu.DropDownItems.Add(collection.Name.Replace("&", "&&"), null,
-                    (_, _) => OpenCollection(collection, activate: true));
-            openMenu.Enabled = openMenu.DropDownItems.Count > 0;
-        };
         using var iconStream = GetResourceStream(new Uri("/_stick;component/Assets/stick.ico", UriKind.Relative)).Stream;
         trayIcon = new System.Drawing.Icon(iconStream, Forms.SystemInformation.SmallIconSize);
         tray = new Forms.NotifyIcon
         {
             Icon = trayIcon,
             Text = AppName,
-            ContextMenuStrip = menu,
             Visible = true
         };
-        tray.DoubleClick += (_, _) => OpenSettings();
+        tray.MouseUp += (_, e) =>
+        {
+            if (e.Button == Forms.MouseButtons.Left)
+                QueueOpenSettings();
+        };
     }
 
-    private void OpenSettings()
+    private void QueueOpenSettings() =>
+        Dispatcher.InvokeAsync(() => OpenSettings(), DispatcherPriority.Normal);
+
+    internal void RequestExit()
     {
-        if (settings is null)
+        if (Flush())
+            Shutdown();
+    }
+
+    private void OpenSettings(bool focusWelcome = false)
+    {
+        if (settings is not null)
         {
-            settings = new CollectionsWindow(this);
-            settings.Closed += (_, _) => settings = null;
-            settings.Show();
+            settings.Activate();
+            return;
         }
 
-        if (settings.WindowState == WindowState.Minimized)
-            settings.WindowState = WindowState.Normal;
-        settings.Activate();
+        var area = SystemParameters.WorkArea;
+        var panel = new CollectionsWindow(this);
+        panel.Width = Math.Min(panel.Width, area.Width - 24);
+        panel.Height = Math.Min(panel.Height, area.Height - 24);
+        panel.Left = area.Right - panel.Width - 12;
+        panel.Top = area.Bottom - panel.Height - 12;
+        settings = panel;
+        panel.Closed += (_, _) => settings = null;
+
+        panel.Show();
+        if (BuiltInCollection is { } builtIn)
+            foreach (var note in builtIn.Notes)
+                ShowNote(builtIn, note, activate: false);
+
+        var welcome = focusWelcome ? BuiltInCollection?.Notes.FirstOrDefault(note => note.IsWelcome) : null;
+        if (welcome is not null && openNotes.TryGetValue(welcome, out var welcomeWindow))
+            welcomeWindow.Activate();
+        else
+            panel.Activate();
     }
 
     private void Scan()
     {
-        var enabled = Collections.Where(collection => collection.Automatic).ToArray();
+        var enabled = Collections.Where(collection => !collection.IsBuiltIn && collection.Automatic).ToArray();
         Dictionary<string, HashSet<int>> current;
         try
         {
@@ -322,23 +423,53 @@ public partial class App : Application
             return;
 
         collection.Notes.RemoveAt(index);
+        collection.TrashedNotes.Add(note);
         if (!TrySave())
         {
+            collection.TrashedNotes.RemoveAt(collection.TrashedNotes.Count - 1);
             collection.Notes.Insert(index, note);
             return;
         }
 
         if (openNotes.TryGetValue(note, out var window))
             window.Close();
+
+        TrashChanged?.Invoke(this, EventArgs.Empty);
     }
+
+    internal void RestoreLastNote(NoteCollection collection)
+    {
+        if (collection.TrashedNotes.Count == 0)
+            return;
+
+        var note = collection.TrashedNotes[^1];
+        collection.TrashedNotes.RemoveAt(collection.TrashedNotes.Count - 1);
+        collection.Notes.Add(note);
+        if (!TrySave())
+        {
+            collection.Notes.Remove(note);
+            collection.TrashedNotes.Add(note);
+            return;
+        }
+
+        ShowNote(collection, note, activate: true);
+        TrashChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    private NoteWindow[] GetOpenNotes(NoteCollection collection) =>
+        collection.Notes
+            .Where(openNotes.ContainsKey)
+            .Select(note => openNotes[note])
+            .ToArray();
 
     private void ShowNote(NoteCollection collection, Note note, bool activate)
     {
         if (!openNotes.TryGetValue(note, out var window))
         {
             window = new NoteWindow(collection.Name, new NoteViewModel(note, QueueSave),
-                () => AddNote(collection, activate: true), () => DeleteNote(collection, note));
-            PlaceNote(window);
+                () => AddNote(collection, activate: true), () => DeleteNote(collection, note),
+                () => GetOpenNotes(collection), () => TrashLayout);
+            PlaceNote(window, note.IsWelcome);
             window.Closed += (_, _) =>
             {
                 openNotes.Remove(note);
@@ -352,9 +483,16 @@ public partial class App : Application
             window.Activate();
     }
 
-    private void PlaceNote(NoteWindow window)
+    private void PlaceNote(NoteWindow window, bool isWelcome)
     {
         var area = SystemParameters.WorkArea;
+        if (isWelcome)
+        {
+            window.Left = area.Left + (area.Width - window.Width) / 2;
+            window.Top = area.Top + (area.Height - window.Height) / 2;
+            return;
+        }
+
         var rows = Math.Max(1, (int)((area.Height - 24) / (window.Height + 10)));
         var columns = Math.Max(1, (int)((area.Width - 24) / (window.Width + 10)));
 
@@ -363,7 +501,9 @@ public partial class App : Application
             var left = Math.Max(area.Left, area.Right - 12 - window.Width - (index / rows) * (window.Width + 10));
             var top = Math.Min(area.Top + 12 + (index % rows) * (window.Height + 10), area.Bottom - window.Height);
             var bounds = new Rect(left, top, window.Width, window.Height);
-            if (openNotes.Values.Any(note => bounds.IntersectsWith(new Rect(note.Left, note.Top, note.Width, note.Height))))
+            if ((settings is { IsVisible: true } openPanel
+                 && bounds.IntersectsWith(new Rect(openPanel.Left, openPanel.Top, openPanel.Width, openPanel.Height)))
+                || openNotes.Values.Any(note => bounds.IntersectsWith(new Rect(note.Left, note.Top, note.Width, note.Height))))
                 continue;
 
             window.Left = left;

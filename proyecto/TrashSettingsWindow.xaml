@@ -1,0 +1,214 @@
+<Window x:Class="_stick.TrashSettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:_stick"
+        Title="Ajustes de la papelera" Icon="/_stick;component/Assets/stick.ico"
+        Width="780" Height="548" MinWidth="670" MinHeight="520"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+        UseLayoutRounding="True" SnapsToDevicePixels="True"
+        Background="#211E2B" Foreground="#FFF8E6" FontFamily="{StaticResource InterfaceFont}" FontSize="14">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/_stick;component/PixelTheme.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <Style x:Key="AnchorButton" TargetType="RadioButton">
+                <Setter Property="Foreground" Value="{StaticResource Paper}"/>
+                <Setter Property="Background" Value="#1B1824"/>
+                <Setter Property="FontSize" Value="20"/>
+                <Setter Property="Margin" Value="0,0,5,5"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="RadioButton">
+                            <Border x:Name="Cell" Background="{TemplateBinding Background}"
+                                    BorderBrush="{StaticResource Outline}" BorderThickness="2" Height="30">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Cell" Property="BorderBrush" Value="{StaticResource Paper}"/>
+                                </Trigger>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter TargetName="Cell" Property="Background" Value="{StaticResource Yellow}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource Ink}"/>
+                                </Trigger>
+                                <Trigger Property="IsKeyboardFocused" Value="True">
+                                    <Setter TargetName="Cell" Property="BorderBrush" Value="#AD8DF2"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style x:Key="SliderSegment" TargetType="RepeatButton">
+                <Setter Property="Focusable" Value="False"/>
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="RepeatButton">
+                            <Grid Background="Transparent">
+                                <Border Background="{TemplateBinding Background}" Height="4" VerticalAlignment="Center"/>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style TargetType="Slider">
+                <Setter Property="TickFrequency" Value="2"/>
+                <Setter Property="IsSnapToTickEnabled" Value="True"/>
+                <Setter Property="LargeChange" Value="10"/>
+                <Setter Property="SmallChange" Value="2"/>
+                <Setter Property="Margin" Value="0,4,0,7"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Slider">
+                            <Grid Height="19" Background="Transparent">
+                                <Border x:Name="Rail" Height="6" VerticalAlignment="Center" Background="#1B1824"
+                                        BorderBrush="{StaticResource Outline}" BorderThickness="1"/>
+                                <Track x:Name="PART_Track">
+                                    <Track.DecreaseRepeatButton>
+                                        <RepeatButton Command="Slider.DecreaseLarge" Style="{StaticResource SliderSegment}"
+                                                      Background="#B78D4F"/>
+                                    </Track.DecreaseRepeatButton>
+                                    <Track.Thumb>
+                                        <Thumb Width="13" Height="17">
+                                            <Thumb.Template>
+                                                <ControlTemplate TargetType="Thumb">
+                                                    <Border Background="{StaticResource Yellow}" BorderBrush="#D19A42" BorderThickness="2">
+                                                        <Rectangle Width="2" Height="7" Fill="{StaticResource Ink}"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Thumb.Template>
+                                        </Thumb>
+                                    </Track.Thumb>
+                                    <Track.IncreaseRepeatButton>
+                                        <RepeatButton Command="Slider.IncreaseLarge" Style="{StaticResource SliderSegment}"/>
+                                    </Track.IncreaseRepeatButton>
+                                </Track>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                    <Setter TargetName="Rail" Property="BorderBrush" Value="#AD8DF2"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <DrawingBrush x:Key="DesktopDots" TileMode="Tile" ViewportUnits="Absolute" Viewport="0,0,16,16"
+                          ViewboxUnits="Absolute" Viewbox="0,0,16,16">
+                <DrawingBrush.Drawing>
+                    <DrawingGroup>
+                        <GeometryDrawing Brush="#1B1824" Geometry="M 0,0 H 16 V 16 H 0 Z"/>
+                        <GeometryDrawing Brush="#383144" Geometry="M 0,0 H 2 V 2 H 0 Z"/>
+                    </DrawingGroup>
+                </DrawingBrush.Drawing>
+            </DrawingBrush>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Border Background="{StaticResource Yellow}" BorderBrush="#D19A42" BorderThickness="2"
+                Padding="14,8" Margin="0,0,0,12">
+            <StackPanel TextElement.Foreground="{StaticResource Ink}">
+                <TextBlock Text="Ajustes de la papelera" FontFamily="{StaticResource PixelFont}" FontSize="30"/>
+                <TextBlock Text="Configura la zona que aparece al arrastrar una nota." TextWrapping="Wrap"/>
+            </StackPanel>
+        </Border>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="265"/>
+                <ColumnDefinition Width="12"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Border Background="{StaticResource Panel}" BorderBrush="{StaticResource Outline}" BorderThickness="2"
+                    Padding="12,9">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel>
+                        <TextBlock Text="01  Posición" FontFamily="{StaticResource PixelFont}" FontSize="21"
+                                   Foreground="{StaticResource Yellow}" Margin="0,0,0,5"/>
+                        <UniformGrid x:Name="AnchorButtons" Columns="3" Rows="3" Margin="0,0,-5,5">
+                            <RadioButton GroupName="Anchor" Tag="TopLeft" Content="↖" Style="{StaticResource AnchorButton}" ToolTip="Arriba a la izquierda" AutomationProperties.Name="Arriba a la izquierda"/>
+                            <RadioButton GroupName="Anchor" Tag="TopCenter" Content="↑" Style="{StaticResource AnchorButton}" ToolTip="Arriba al centro" AutomationProperties.Name="Arriba al centro"/>
+                            <RadioButton GroupName="Anchor" Tag="TopRight" Content="↗" Style="{StaticResource AnchorButton}" ToolTip="Arriba a la derecha" AutomationProperties.Name="Arriba a la derecha"/>
+                            <RadioButton GroupName="Anchor" Tag="MiddleLeft" Content="←" Style="{StaticResource AnchorButton}" ToolTip="Centro a la izquierda" AutomationProperties.Name="Centro a la izquierda"/>
+                            <RadioButton GroupName="Anchor" Tag="Center" Content="·" Style="{StaticResource AnchorButton}" ToolTip="Centro" AutomationProperties.Name="Centro"/>
+                            <RadioButton GroupName="Anchor" Tag="MiddleRight" Content="→" Style="{StaticResource AnchorButton}" ToolTip="Centro a la derecha" AutomationProperties.Name="Centro a la derecha"/>
+                            <RadioButton GroupName="Anchor" Tag="BottomLeft" Content="↙" Style="{StaticResource AnchorButton}" ToolTip="Abajo a la izquierda" AutomationProperties.Name="Abajo a la izquierda"/>
+                            <RadioButton GroupName="Anchor" Tag="BottomCenter" Content="↓" Style="{StaticResource AnchorButton}" ToolTip="Abajo al centro" AutomationProperties.Name="Abajo al centro"/>
+                            <RadioButton GroupName="Anchor" Tag="BottomRight" Content="↘" Style="{StaticResource AnchorButton}" ToolTip="Abajo a la derecha" AutomationProperties.Name="Abajo a la derecha"/>
+                        </UniformGrid>
+
+                        <TextBlock Text="02  Dimensiones" FontFamily="{StaticResource PixelFont}" FontSize="21"
+                                   Foreground="{StaticResource Yellow}" Margin="0,0,0,6"/>
+                        <DockPanel>
+                            <TextBlock DockPanel.Dock="Right" Text="{Binding Value, ElementName=WidthSlider, StringFormat={}{0:0} px}"/>
+                            <TextBlock Text="Ancho"/>
+                        </DockPanel>
+                        <Slider x:Name="WidthSlider" AutomationProperties.Name="Ancho de la papelera"/>
+                        <DockPanel>
+                            <TextBlock DockPanel.Dock="Right" Text="{Binding Value, ElementName=HeightSlider, StringFormat={}{0:0} px}"/>
+                            <TextBlock Text="Alto"/>
+                        </DockPanel>
+                        <Slider x:Name="HeightSlider" AutomationProperties.Name="Alto de la papelera"/>
+                        <DockPanel>
+                            <TextBlock DockPanel.Dock="Right" Text="{Binding Value, ElementName=MarginSlider, StringFormat={}{0:0} px}"/>
+                            <TextBlock Text="Margen al borde"/>
+                        </DockPanel>
+                        <Slider x:Name="MarginSlider" AutomationProperties.Name="Margen al borde de la pantalla"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+
+            <Border Grid.Column="2" Background="{StaticResource Panel}" BorderBrush="{StaticResource Outline}"
+                    BorderThickness="2" Padding="13,10">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Top" Margin="0,0,0,10">
+                        <TextBlock Text="Vista previa" FontFamily="{StaticResource PixelFont}" FontSize="24"
+                                   Foreground="{StaticResource Yellow}"/>
+                        <TextBlock Text="Esquema del área de trabajo" Foreground="{StaticResource Muted}"/>
+                    </StackPanel>
+                    <StackPanel DockPanel.Dock="Bottom" Margin="0,10,0,0">
+                        <CheckBox x:Name="HighlightPreview" Content="Simular el puntero encima"
+                                  Foreground="{StaticResource Paper}"/>
+                        <TextBlock Text="La papelera usa la pantalla donde empiezas a arrastrar."
+                                   TextWrapping="Wrap" Foreground="{StaticResource Muted}" FontSize="13" Margin="0,7,0,0"/>
+                    </StackPanel>
+                    <Viewbox>
+                        <Border BorderThickness="4" BorderBrush="#716581" Background="#171420">
+                            <DockPanel>
+                                <Border DockPanel.Dock="Bottom" Height="18" Background="#2D2839" Padding="7,0">
+                                    <TextBlock Text="ESCRITORIO" FontFamily="{StaticResource PixelFont}"
+                                               Foreground="{StaticResource Muted}" FontSize="12" VerticalAlignment="Center"/>
+                                </Border>
+                                <Canvas x:Name="PreviewArea" Width="550" Height="310"
+                                        Background="{StaticResource DesktopDots}" ClipToBounds="True">
+                                    <Border Canvas.Left="26" Canvas.Top="24" Width="80" Height="66"
+                                            Background="#534733" BorderBrush="#806838" BorderThickness="2"/>
+                                    <Border Canvas.Left="112" Canvas.Top="40" Width="62" Height="50"
+                                            Background="#433649" BorderBrush="#685477" BorderThickness="2"/>
+                                    <local:TrashDropVisual x:Name="PreviewTarget"
+                                                           IsHighlighted="{Binding IsChecked, ElementName=HighlightPreview}"/>
+                                </Canvas>
+                            </DockPanel>
+                        </Border>
+                    </Viewbox>
+                </DockPanel>
+            </Border>
+        </Grid>
+
+        <DockPanel Grid.Row="2" Margin="0,12,0,0" LastChildFill="False">
+            <Button Content="Restablecer" Style="{StaticResource PixelButton}" Click="Reset_Click" DockPanel.Dock="Left"/>
+            <Button Content="Guardar" Style="{StaticResource PrimaryButton}" Click="Save_Click"
+                    DockPanel.Dock="Right" IsDefault="True"/>
+            <Button Content="Cancelar" Style="{StaticResource PixelButton}" IsCancel="True"
+                    DockPanel.Dock="Right" Margin="0,0,8,0"/>
+        </DockPanel>
+    </Grid>
+</Window>

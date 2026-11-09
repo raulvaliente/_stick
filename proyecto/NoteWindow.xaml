@@ -5,7 +5,8 @@
         xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
         MinWidth="165" MinHeight="120" WindowStyle="None" ResizeMode="CanResize"
         ShowInTaskbar="False" ShowActivated="False" Topmost="True" Icon="/_stick;component/Assets/stick.ico"
-        Background="{Binding Background}" FontFamily="{StaticResource InterfaceFont}">
+        Background="{Binding Background}" FontFamily="{StaticResource InterfaceFont}"
+        PreviewKeyDown="Window_PreviewKeyDown">
     <shell:WindowChrome.WindowChrome>
         <shell:WindowChrome CaptionHeight="0" ResizeBorderThickness="6" GlassFrameThickness="0"
                             CornerRadius="0" UseAeroCaptionButtons="False"/>
@@ -26,11 +27,20 @@
                 <Button Content="◐" ToolTip="Cambiar color" AutomationProperties.Name="Cambiar color" Click="Color_Click"/>
                 <Button Content="×" ToolTip="Ocultar nota" AutomationProperties.Name="Ocultar nota" Click="Hide_Click"/>
             </StackPanel>
-            <Border Background="Transparent" Cursor="SizeAll" MouseLeftButtonDown="Header_MouseLeftButtonDown">
-                <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Title}"
-                           VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
-                           Foreground="{Binding Foreground}" FontWeight="SemiBold"/>
-            </Border>
+            <Thumb x:Name="DragHeader" Cursor="SizeAll" Focusable="True"
+                   AutomationProperties.Name="Mover nota"
+                   DragStarted="Header_DragStarted" DragDelta="Header_DragDelta"
+                   DragCompleted="Header_DragCompleted">
+                <Thumb.Template>
+                    <ControlTemplate TargetType="Thumb">
+                        <Border Background="Transparent">
+                            <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Title}"
+                                       VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
+                                       Foreground="{Binding Foreground}" FontWeight="SemiBold"/>
+                        </Border>
+                    </ControlTemplate>
+                </Thumb.Template>
+            </Thumb>
         </DockPanel>
         <Grid>
             <TextBox x:Name="Editor" Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" FontSize="15"
@@ -39,11 +49,12 @@
                      BorderThickness="0" Padding="2" AcceptsReturn="True"
                      TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"/>
             <local:MarkdownPreview x:Name="Preview" IsHitTestVisible="False"/>
+            <local:WelcomeNoteView x:Name="WelcomeGuide" Visibility="Collapsed"/>
         </Grid>
     </DockPanel>
     <Window.ContextMenu>
         <ContextMenu FontFamily="{StaticResource InterfaceFont}">
-            <MenuItem Header="Eliminar nota…" Click="Delete_Click"/>
+            <MenuItem Header="Mover a la papelera…" Click="Delete_Click"/>
         </ContextMenu>
     </Window.ContextMenu>
 </Window>

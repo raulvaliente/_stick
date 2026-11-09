@@ -8,6 +8,7 @@ internal sealed class NoteViewModel(Note note, Action changed) : INotifyProperty
 {
     public event PropertyChangedEventHandler? PropertyChanged;
 
+    public bool IsWelcome => note.IsWelcome;
     public double Width => note.Width;
     public double Height => note.Height;
 

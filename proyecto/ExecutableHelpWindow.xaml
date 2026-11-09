@@ -33,8 +33,9 @@
 
                 <TextBlock FontWeight="Bold" Text="3. Añádelo a _stick" TextWrapping="Wrap"/>
                 <TextBlock TextWrapping="Wrap" Margin="0,5,0,14">
-                    Vuelve a <Bold>Añadir aplicación…</Bold>. Selecciona el archivo .exe o pega su ruta completa
-                    en <Bold>Nombre de archivo</Bold>. Por ejemplo, PyCharm suele tener <Bold>pycharm64.exe</Bold>
+                    Vuelve a <Bold>Añadir aplicación…</Bold> y pulsa <Bold>Buscar archivo…</Bold>.
+                    Selecciona el .exe o pega su ruta completa en <Bold>Nombre de archivo</Bold>.
+                    Por ejemplo, PyCharm suele tener <Bold>pycharm64.exe</Bold>
                     dentro de su carpeta <Bold>bin</Bold>.
                     Si una actualización mueve el ejecutable, usa <Bold>Cambiar ejecutable…</Bold> para conservar tus notas.
                 </TextBlock>
