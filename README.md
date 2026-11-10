@@ -38,11 +38,18 @@ El panel se abre en la esquina inferior derecha. El interruptor **Icono en barra
 - **Activado.** Al cerrar el panel, se minimiza. Un clic en el icono de `_stick` en la barra de tareas lo restaura.
 - **Desactivado.** El icono se oculta de la barra de tareas. El panel se puede reabrir desde la bandeja o ejecutando `_stick.exe` otra vez.
 
-Las notas de la biblioteca `_stick` siguen visibles al cerrar el panel en ambos modos.
+Las notas de la biblioteca `_stick` siguen visibles al cerrar el panel en ambos modos. **+ Vincular** abre el selector de aplicaciones. Desde ahí se puede elegir una aplicación abierta, usar **Buscar archivo…** para seleccionar un ejecutable o consultar **Ayuda** para localizarlo en Windows.
 
-<p align="center">
-  <img src="assets/readme/panel-bibliotecas.png" width="388" alt="Panel de bibliotecas de _stick con el interruptor Icono en barra de tareas activado al pie">
-</p>
+<table align="center">
+  <tr>
+    <th scope="col">Panel de bibliotecas</th>
+    <th scope="col">+ Vincular</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="assets/readme/panel-bibliotecas.png" width="254" alt="Panel de bibliotecas de _stick con el interruptor Icono en barra de tareas activado al pie"></td>
+    <td align="center"><img src="assets/readme/tutorial-vincular.png" width="471" alt="Selector de ejecutables con el tutorial Tu primera biblioteca, una lista de aplicaciones de ejemplo y el botón Ayuda"></td>
+  </tr>
+</table>
 
 ### Tutorial de bienvenida en dos pasos
 
@@ -56,14 +63,6 @@ Al cerrar la nota amarilla con **×**, aparece en el mismo sitio la guía verde 
 
 <p align="center">
   <img src="assets/readme/tutorial-markdown.png" width="780" alt="Nota verde pastel con la guía de Markdown, ejemplos de tablas y código y el botón Copiar ejemplo">
-</p>
-
-### Primera vinculación
-
-El selector explica cómo asociar una aplicación abierta a una biblioteca. **Buscar archivo…** permite elegir un ejecutable manualmente y **Ayuda** explica cómo localizarlo en Windows.
-
-<p align="center">
-  <img src="assets/readme/tutorial-vincular.png" width="644" alt="Selector de ejecutables con el tutorial Tu primera biblioteca, una lista de aplicaciones de ejemplo y el botón Ayuda">
 </p>
 
 ### Color de la nota
