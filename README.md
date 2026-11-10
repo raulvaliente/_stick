@@ -157,7 +157,7 @@ Los datos se guardan por usuario en `%LOCALAPPDATA%\_stick`. `notes.json` contie
 
 | Etapa | Cambios incorporados |
 | --- | --- |
-| **0.1 Preview** | Bibliotecas asociadas por ruta del ejecutable. Detección del inicio y cierre de aplicaciones, guardado local de notas y vista previa de Markdown durante la edición. |
+| **Preview** | Bibliotecas asociadas por ruta del ejecutable. Detección del inicio y cierre de aplicaciones, guardado local de notas y vista previa de Markdown durante la edición. |
 | **Gestión de notas** | Movimiento en grupo con `Ctrl` y papelera al arrastrar. Las notas retiradas se pueden restaurar y el usuario puede ajustar la posición y el tamaño de la papelera. |
 | **Vinculación guiada** | Selector de aplicaciones abiertas, búsqueda manual de ejecutables y tutorial para crear la primera biblioteca. |
 | **Panel de bandeja y bienvenida** | El gestor ancho dio paso a un panel compacto en la esquina inferior derecha. Se incorporó la biblioteca propia de `_stick` con un tutorial ilustrado y animado. |
