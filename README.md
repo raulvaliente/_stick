@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/readme/stick-logo.png" width="144" height="144" alt="Post-it amarillo en pixel art con un guion bajo">
+  <img src="assets/readme/stick-logo-portada.png" width="144" height="144" alt="Post-it amarillo en pixel art con un guion bajo">
   <h1>_stick</h1>
   <p><strong>Notas de escritorio vinculadas a aplicaciones de Windows</strong></p>
   <p>C# · WPF · .NET 10</p>
@@ -182,6 +182,14 @@ Los datos se guardan por usuario en `%LOCALAPPDATA%\_stick`. `notes.json` contie
 ## Documentación
 
 La [guía técnica para Obsidian](<proyecto/Guia de _stick para Obsidian.md>) documenta las clases y los métodos, el ciclo de vida de las notas y el flujo de guardado. Incluye ejercicios de depuración y los pasos para trasladar el proyecto a otro repositorio.
+
+## _stick en uso
+
+Una nota de la biblioteca de Visual Studio Code muestra una tabla de atajos junto al editor. El contenido de esta captura parte de las [notas de ejemplo](ejemplos_notas/).
+
+<p align="center">
+  <img src="assets/readme/stick-en-uso.png" width="860" alt="Nota lila de _stick con una tabla de atajos de teclado, abierta junto a Visual Studio Code">
+</p>
 
 ---
 
