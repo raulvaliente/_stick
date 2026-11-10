@@ -62,38 +62,21 @@ Al cerrar la nota amarilla con **×**, aparece en el mismo sitio la guía verde 
 
 El selector combina colores predeterminados con controles RGB, un campo HEX y una vista previa. **Guardar en mi paleta** conserva la muestra para otras notas. **Aplicar** cambia el color del post-it abierto.
 
-<p align="center">
-  <img src="assets/readme/color-nota.png" width="528" alt="Selector de color de _stick con una vista previa en lila pastel (#DCC5F4) y la muestra guardada en Mi paleta">
-</p>
-
 Al pulsar **+** en una nota, el nuevo post-it hereda su color y aparece al lado si hay espacio.
 
 <p align="center">
-  <img src="assets/readme/color-heredado.png" width="522" alt="Dos post-its de la biblioteca Python con el mismo lila pastel tras crear uno desde el otro">
+  <img src="assets/readme/color-nota.png" width="47%" align="middle" alt="Selector de color de _stick con una vista previa en lila pastel (#DCC5F4) y la muestra guardada en Mi paleta">&nbsp;&nbsp;<img src="assets/readme/color-heredado.png" width="47%" align="middle" alt="Dos post-its de la biblioteca Python con el mismo lila pastel tras crear uno desde el otro">
 </p>
 
 ### Edición Markdown
 
-La vista previa muestra tablas, bloques de código, listas de tareas, citas y formato de texto. La línea activa conserva la sintaxis mientras se edita.
+La vista previa muestra tablas, bloques de código, listas de tareas y citas. La línea activa conserva la sintaxis mientras se edita.
 
 <p align="center">
-  <img src="assets/readme/markdown-nota.png" width="510" alt="Nota de _stick con una tabla, tareas, un bloque Python y un enlace renderizados">
+  <img src="assets/readme/markdown-nota.png" width="50%" align="middle" alt="Nota de _stick con una tabla, tareas, un bloque Python y un enlace renderizados">&nbsp;&nbsp;<img src="assets/readme/markdown-controles.png" width="44%" align="middle" alt="Menú de formato a la izquierda, sugerencias de lenguajes arriba a la derecha y menú de inserción debajo">
 </p>
 
-El autocompletado propone plantillas según el marcador escrito. El menú de clic derecho permite dar formato a la selección o insertar elementos Markdown.
-
-<table align="center">
-  <tr>
-    <th>Autocompletado</th>
-    <th>Menú de formato</th>
-    <th>Menú de inserción</th>
-  </tr>
-  <tr>
-    <td align="center"><img src="assets/readme/markdown-autocompletado.png" alt="Lista de sugerencias con lenguajes para un bloque de código"></td>
-    <td align="center"><img src="assets/readme/markdown-formato.png" alt="Menú contextual con opciones de negrita, cursiva, tachado, resaltado, código, encabezados y listas"></td>
-    <td align="center"><img src="assets/readme/markdown-insertar.png" alt="Menú Insertar con tabla, enlace, bloque de código, selector de lenguaje y separador"></td>
-  </tr>
-</table>
+El **autocompletado** propone plantillas al escribir un marcador. Desde el menú de clic derecho, **Formato** aplica estilos al texto seleccionado e **Insertar** añade tablas, enlaces o bloques de código.
 
 ## Funcionalidades
 
