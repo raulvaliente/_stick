@@ -1,6 +1,5 @@
 <div align="center">
-  <img src="assets/readme/stick-logo-portada.png" width="144" height="144" alt="Post-it amarillo en pixel art con un guion bajo">
-  <h1>_stick</h1>
+  <h1><img src="assets/readme/stick-logo-portada.png" width="555" alt="_stick · Notas por aplicación"></h1>
   <p><strong>Notas de escritorio vinculadas a aplicaciones de Windows</strong></p>
   <p>C# · WPF · .NET 10</p>
   <p>
