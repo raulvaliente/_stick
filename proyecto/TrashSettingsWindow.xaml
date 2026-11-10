@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:_stick"
-        Title="Ajustes de la papelera" Icon="/_stick;component/Assets/stick.ico"
+        Title="Ajustes de la papelera" Icon="/_stick;component/assets/stick.ico"
         Width="780" Height="548" MinWidth="670" MinHeight="520"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
         UseLayoutRounding="True" SnapsToDevicePixels="True"

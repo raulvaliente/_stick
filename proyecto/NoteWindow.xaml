@@ -4,7 +4,7 @@
         xmlns:local="clr-namespace:_stick"
         xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
         MinWidth="165" MinHeight="120" WindowStyle="None" ResizeMode="CanResize"
-        ShowInTaskbar="False" ShowActivated="False" Topmost="True" Icon="/_stick;component/Assets/stick.ico"
+        ShowInTaskbar="False" ShowActivated="False" Topmost="True" Icon="/_stick;component/assets/stick.ico"
         Background="{Binding Background}" FontFamily="{StaticResource InterfaceFont}"
         PreviewKeyDown="Window_PreviewKeyDown">
     <shell:WindowChrome.WindowChrome>

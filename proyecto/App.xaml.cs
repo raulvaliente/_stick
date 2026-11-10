@@ -377,7 +377,7 @@ public partial class App : Application
 
     private void CreateTray()
     {
-        using var iconStream = GetResourceStream(new Uri("/_stick;component/Assets/stick.ico", UriKind.Relative)).Stream;
+        using var iconStream = GetResourceStream(new Uri("/_stick;component/assets/stick.ico", UriKind.Relative)).Stream;
         trayIcon = new System.Drawing.Icon(iconStream, Forms.SystemInformation.SmallIconSize);
         tray = new Forms.NotifyIcon
         {

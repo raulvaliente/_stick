@@ -5,11 +5,11 @@
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
     <Nullable>enable</Nullable>
-    <ApplicationIcon>Assets\stick.ico</ApplicationIcon>
+    <ApplicationIcon>assets\stick.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Resource Include="Assets\stick.ico" />
-    <Resource Include="Assets\Fonts\PixelifySans.ttf" />
-    <None Update="Assets\Fonts\PixelifySans-OFL.txt" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Resource Include="assets\stick.ico" />
+    <Resource Include="assets\fonts\PixelifySans.ttf" />
+    <None Update="assets\fonts\PixelifySans-OFL.txt" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

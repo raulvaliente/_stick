@@ -1,7 +1,7 @@
 <Window x:Class="_stick.CollectionsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="_stick" Icon="/_stick;component/Assets/stick.ico"
+        Title="_stick" Icon="/_stick;component/assets/stick.ico"
         Width="388" Height="560" WindowStyle="None" ResizeMode="CanMinimize"
         WindowStartupLocation="Manual" ShowInTaskbar="False" Topmost="True"
         PreviewKeyDown="Window_PreviewKeyDown" UseLayoutRounding="True" SnapsToDevicePixels="True"
@@ -89,7 +89,7 @@
                     <Button DockPanel.Dock="Right" Content="×" Width="34" MinHeight="32" Padding="0"
                             VerticalAlignment="Center" ToolTip="Ocultar panel" AutomationProperties.Name="Ocultar panel"
                             Style="{StaticResource PixelButton}" Click="Close_Click"/>
-                    <Image DockPanel.Dock="Left" Source="/_stick;component/Assets/stick.ico" Width="36" Height="36"
+                    <Image DockPanel.Dock="Left" Source="/_stick;component/assets/stick.ico" Width="36" Height="36"
                            Margin="0,0,8,0" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
                     <StackPanel VerticalAlignment="Center" TextElement.Foreground="{StaticResource Ink}">
                         <TextBlock Text="_stick" FontFamily="{StaticResource PixelFont}" FontSize="26"/>

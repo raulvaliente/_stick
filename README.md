@@ -1,9 +1,10 @@
 <div align="center">
-  <img src="Assets/Readme/stick-logo.png" width="144" height="144" alt="Post-it amarillo en pixel art con un guion bajo">
+  <img src="assets/readme/stick-logo.png" width="144" height="144" alt="Post-it amarillo en pixel art con un guion bajo">
   <h1>_stick</h1>
   <p><strong>Notas de escritorio vinculadas a aplicaciones de Windows</strong></p>
   <p>C# · WPF · .NET 10</p>
   <p>
+    <a href="#estructura-del-repositorio">Estructura</a> ·
     <a href="#capturas">Capturas</a> ·
     <a href="#puesta-en-marcha">Puesta en marcha</a> ·
     <a href="#arquitectura">Arquitectura</a> ·
@@ -18,6 +19,16 @@
 
 `_stick` es una aplicación de escritorio que organiza notas en bibliotecas asociadas a ejecutables de Windows. Las notas de cada biblioteca aparecen al iniciarse la aplicación vinculada y se cierran al terminar su último proceso. El contenido se almacena localmente y se recupera al volver a abrir la biblioteca.
 
+## Estructura del repositorio
+
+| Carpeta | Contenido |
+| --- | --- |
+| [`_stick/proyecto/`](proyecto/) | Código fuente de la aplicación, ventanas WPF y archivos de compilación. El punto de entrada para abrir y compilar el código en Visual Studio es [`_stick.csproj`](proyecto/_stick.csproj). |
+| [`_stick/ejemplos_notas/`](ejemplos_notas/) | Notas de muestra en Markdown para ChatGPT, Chrome, Obsidian, PyCharm, Visual Studio Code y Windows. Se pueden copiar al editor de `_stick` para probar su formato y usarlas como punto de partida. |
+| [`_stick/assets/`](assets/) | Material gráfico del repositorio. El logo y las capturas de esta página están en [`assets/readme/`](assets/readme/). |
+
+Los recursos que usa la aplicación al ejecutarse (el icono y la fuente) están en [`proyecto/assets/`](proyecto/assets/), junto al código. Las notas personales se guardan en `%LOCALAPPDATA%\_stick`, fuera del repositorio.
+
 ## Capturas
 
 ### Panel de bibliotecas
@@ -30,7 +41,7 @@ El panel se abre en la esquina inferior derecha. El interruptor **Icono en barra
 Las notas de la biblioteca `_stick` siguen visibles al cerrar el panel en ambos modos.
 
 <p align="center">
-  <img src="Assets/Readme/panel-bibliotecas.png" width="388" alt="Panel de bibliotecas de _stick con el interruptor Icono en barra de tareas activado al pie">
+  <img src="assets/readme/panel-bibliotecas.png" width="388" alt="Panel de bibliotecas de _stick con el interruptor Icono en barra de tareas activado al pie">
 </p>
 
 ### Tutorial de bienvenida en dos pasos
@@ -38,13 +49,13 @@ Las notas de la biblioteca `_stick` siguen visibles al cerrar el panel en ambos 
 La nota amarilla explica cómo vincular aplicaciones, ocultar notas y moverlas a la papelera. Las tres viñetas se animan al pasar el puntero por encima.
 
 <p align="center">
-  <img src="Assets/Readme/tutorial-bienvenida.png" width="780" alt="Nota de bienvenida de _stick con el logo y tres viñetas que muestran cómo sujetar, arrastrar y soltar una nota">
+  <img src="assets/readme/tutorial-bienvenida.png" width="780" alt="Nota de bienvenida de _stick con el logo y tres viñetas que muestran cómo sujetar, arrastrar y soltar una nota">
 </p>
 
 Al cerrar la nota amarilla con **×**, aparece en el mismo sitio la guía verde de Markdown. Incluye ejemplos de tablas y código, atajos para el autocompletado y un botón **Copiar ejemplo**.
 
 <p align="center">
-  <img src="Assets/Readme/tutorial-markdown.png" width="780" alt="Nota verde pastel con la guía de Markdown, ejemplos de tablas y código y el botón Copiar ejemplo">
+  <img src="assets/readme/tutorial-markdown.png" width="780" alt="Nota verde pastel con la guía de Markdown, ejemplos de tablas y código y el botón Copiar ejemplo">
 </p>
 
 ### Primera vinculación
@@ -52,7 +63,7 @@ Al cerrar la nota amarilla con **×**, aparece en el mismo sitio la guía verde 
 El selector explica cómo asociar una aplicación abierta a una biblioteca. **Buscar archivo…** permite elegir un ejecutable manualmente y **Ayuda** explica cómo localizarlo en Windows.
 
 <p align="center">
-  <img src="Assets/Readme/tutorial-vincular.png" width="644" alt="Selector de ejecutables con el tutorial Tu primera biblioteca, una lista de aplicaciones de ejemplo y el botón Ayuda">
+  <img src="assets/readme/tutorial-vincular.png" width="644" alt="Selector de ejecutables con el tutorial Tu primera biblioteca, una lista de aplicaciones de ejemplo y el botón Ayuda">
 </p>
 
 ### Color de la nota
@@ -60,13 +71,13 @@ El selector explica cómo asociar una aplicación abierta a una biblioteca. **Bu
 El selector combina colores predeterminados con controles RGB, un campo HEX y una vista previa. **Guardar en mi paleta** conserva la muestra para otras notas. **Aplicar** cambia el color del post-it abierto.
 
 <p align="center">
-  <img src="Assets/Readme/color-nota.png" width="528" alt="Selector de color de _stick con colores predeterminados, una paleta personal y una vista previa violeta">
+  <img src="assets/readme/color-nota.png" width="528" alt="Selector de color de _stick con una vista previa en lila pastel (#DCC5F4) y la muestra guardada en Mi paleta">
 </p>
 
 Al pulsar **+** en una nota, el nuevo post-it hereda su color y aparece al lado si hay espacio.
 
 <p align="center">
-  <img src="Assets/Readme/color-heredado.png" width="522" alt="Dos post-its de la biblioteca Python con el mismo color violeta tras crear uno desde el otro">
+  <img src="assets/readme/color-heredado.png" width="522" alt="Dos post-its de la biblioteca Python con el mismo lila pastel tras crear uno desde el otro">
 </p>
 
 ### Edición Markdown
@@ -74,7 +85,7 @@ Al pulsar **+** en una nota, el nuevo post-it hereda su color y aparece al lado 
 La vista previa muestra tablas, bloques de código, listas de tareas, citas y formato de texto. La línea activa conserva la sintaxis mientras se edita.
 
 <p align="center">
-  <img src="Assets/Readme/markdown-nota.png" width="510" alt="Nota de _stick con una tabla, tareas, un bloque Python y un enlace renderizados">
+  <img src="assets/readme/markdown-nota.png" width="510" alt="Nota de _stick con una tabla, tareas, un bloque Python y un enlace renderizados">
 </p>
 
 El autocompletado propone plantillas según el marcador escrito. El menú de clic derecho permite dar formato a la selección o insertar elementos Markdown.
@@ -86,9 +97,9 @@ El autocompletado propone plantillas según el marcador escrito. El menú de cli
     <th>Menú de inserción</th>
   </tr>
   <tr>
-    <td align="center"><img src="Assets/Readme/markdown-autocompletado.png" alt="Lista de sugerencias con lenguajes para un bloque de código"></td>
-    <td align="center"><img src="Assets/Readme/markdown-formato.png" alt="Menú contextual con opciones de negrita, cursiva, tachado, resaltado, código, encabezados y listas"></td>
-    <td align="center"><img src="Assets/Readme/markdown-insertar.png" alt="Menú Insertar con tabla, enlace, bloque de código, selector de lenguaje y separador"></td>
+    <td align="center"><img src="assets/readme/markdown-autocompletado.png" alt="Lista de sugerencias con lenguajes para un bloque de código"></td>
+    <td align="center"><img src="assets/readme/markdown-formato.png" alt="Menú contextual con opciones de negrita, cursiva, tachado, resaltado, código, encabezados y listas"></td>
+    <td align="center"><img src="assets/readme/markdown-insertar.png" alt="Menú Insertar con tabla, enlace, bloque de código, selector de lenguaje y separador"></td>
   </tr>
 </table>
 
@@ -158,7 +169,7 @@ Los datos se guardan por usuario en `%LOCALAPPDATA%\_stick`. `notes.json` contie
 <details>
   <summary>Ver el gestor de aplicaciones de la versión anterior</summary>
   <p align="center">
-    <img src="Assets/Readme/aplicaciones.png" width="720" alt="Gestor ancho de una versión anterior de _stick con los botones de ayuda y gestión junto a la lista de aplicaciones">
+    <img src="assets/readme/aplicaciones.png" width="720" alt="Gestor ancho de una versión anterior de _stick con los botones de ayuda y gestión junto a la lista de aplicaciones">
   </p>
 </details>
 
@@ -174,4 +185,4 @@ La [guía técnica para Obsidian](<proyecto/Guia de _stick para Obsidian.md>) do
 
 ---
 
-**Créditos.** La ventana principal usa [Pixelify Sans](https://fonts.google.com/specimen/Pixelify+Sans). Su [licencia SIL Open Font License](proyecto/Assets/Fonts/PixelifySans-OFL.txt) está incluida en el proyecto.
+**Créditos.** La ventana principal usa [Pixelify Sans](https://fonts.google.com/specimen/Pixelify+Sans). Su [licencia SIL Open Font License](proyecto/assets/fonts/PixelifySans-OFL.txt) está incluida en el proyecto.

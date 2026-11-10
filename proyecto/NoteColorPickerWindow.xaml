@@ -1,7 +1,7 @@
 <Window x:Class="_stick.NoteColorPickerWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Color de la nota" Icon="/_stick;component/Assets/stick.ico"
+        Title="Color de la nota" Icon="/_stick;component/assets/stick.ico"
         Width="544" SizeToContent="Height" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
         UseLayoutRounding="True" SnapsToDevicePixels="True"
@@ -36,7 +36,7 @@
     <StackPanel Margin="18">
         <Border Background="{StaticResource Yellow}" BorderBrush="#D19A42" BorderThickness="2" Padding="11,8">
             <DockPanel>
-                <Image DockPanel.Dock="Left" Source="/_stick;component/Assets/stick.ico" Width="36" Height="36"
+                <Image DockPanel.Dock="Left" Source="/_stick;component/assets/stick.ico" Width="36" Height="36"
                        Margin="0,0,10,0" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
                 <StackPanel TextElement.Foreground="{StaticResource Ink}">
                     <TextBlock Text="Color de la nota" FontFamily="{StaticResource PixelFont}" FontSize="25"/>

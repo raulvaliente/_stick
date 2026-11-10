@@ -125,7 +125,7 @@
                             <Border DockPanel.Dock="Left" Width="74" Height="74" Margin="0,0,15,0"
                                     VerticalAlignment="Top" Background="#332B43"
                                     BorderBrush="#5F5271" BorderThickness="1">
-                                <Image Source="/_stick;component/Assets/stick.ico" Width="64" Height="64"
+                                <Image Source="/_stick;component/assets/stick.ico" Width="64" Height="64"
                                        RenderOptions.BitmapScalingMode="NearestNeighbor"
                                        AutomationProperties.Name="Logo de _stick"/>
                             </Border>

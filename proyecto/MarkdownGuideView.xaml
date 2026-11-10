@@ -47,7 +47,7 @@
                     <DockPanel Margin="0,0,0,10">
                         <Border DockPanel.Dock="Left" Width="65" Height="65" Margin="0,0,12,0"
                                 Background="#32433E" BorderBrush="#516C60" BorderThickness="1">
-                            <Image Source="/_stick;component/Assets/stick.ico" Width="54" Height="54"
+                            <Image Source="/_stick;component/assets/stick.ico" Width="54" Height="54"
                                    RenderOptions.BitmapScalingMode="NearestNeighbor" AutomationProperties.Name="Logo de _stick"/>
                         </Border>
                         <StackPanel>

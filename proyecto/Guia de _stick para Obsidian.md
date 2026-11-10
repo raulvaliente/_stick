@@ -53,7 +53,7 @@ Un **proyecto** agrupa los archivos que se compilan juntos para producir una apl
 | `ExecutableHelpWindow.xaml` y `ExecutableHelpWindow.xaml.cs` | Contienen la guía que se abre al pulsar **Ayuda** junto a **Añadir aplicación…**. |
 | `LocalStore.cs` | Convierte las colecciones a un archivo JSON y las recupera al arrancar. |
 | `ProcessMonitor.cs` | Consulta qué ejecutables están activos en tu sesión de Windows. |
-| `Assets/` | Contiene el icono de `_stick`, la fuente Pixelify Sans y su licencia. El proyecto incorpora el icono y la fuente para que WPF pueda cargarlos como recursos. |
+| `assets/` | Contiene el icono de `_stick`, la fuente Pixelify Sans y su licencia. El proyecto incorpora el icono y la fuente para que WPF pueda cargarlos como recursos. |
 | `README.md` | Instrucciones breves para ejecutar y probar el proyecto. |
 
 `bin` contiene los archivos compilados, `obj` contiene archivos intermedios que genera la compilación y `.vs` guarda estado local de Visual Studio. Para cambiar el programa, edita los archivos de la tabla. `.gitignore` indica a Git qué archivos generados debe ignorar.
@@ -298,7 +298,7 @@ Este archivo es el **code-behind**, la parte C# asociada al XAML que responde a 
 
 El `Grid` divide el panel en una cabecera con el logo y el cierre, una zona central con la lista, **+ Vincular** y **Borrar**, y un pie con los ajustes. Un `UniformGrid` reparte los botones de gestión en tres filas y dos columnas. `App.OpenSettings()` coloca el panel en la esquina inferior derecha del área de trabajo.
 
-`Window.Resources` carga `PixelTheme.xaml` y contiene estilos propios del gestor. Un `ControlTemplate` define cómo se dibuja un control y sus disparadores reaccionan a estados como pasar el ratón, seleccionar una fila o enfocar con el teclado. `PixelFont` apunta a la fuente Pixelify Sans incluida en `Assets/Fonts` y se usa en títulos, nombres y botones. El resto de la interfaz de la aplicación utiliza el recurso compartido `InterfaceFont`, definido como Consolas en `App.xaml`.
+`Window.Resources` carga `PixelTheme.xaml` y contiene estilos propios del gestor. Un `ControlTemplate` define cómo se dibuja un control y sus disparadores reaccionan a estados como pasar el ratón, seleccionar una fila o enfocar con el teclado. `PixelFont` apunta a la fuente Pixelify Sans incluida en `assets/Fonts` y se usa en títulos, nombres y botones. El resto de la interfaz de la aplicación utiliza el recurso compartido `InterfaceFont`, definido como Consolas en `App.xaml`.
 
 - `x:Name="Collections"` y `x:Name="Startup"` dan a C# acceso a la lista y a la casilla de inicio. **Collections** en esta ventana es un control visual. **App.Collections** es la lista de objetos que ese control muestra.
 - `IsEnabled="{Binding HasSelection}"` habilita **Abrir notas** si hay una selección. `HasExternalSelection` habilita el borrado y los controles de nombre y detección para las bibliotecas vinculadas. `Content="{Binding AutomaticAction}"` pone **Activar detección** o **Pausar detección** según el estado.
@@ -544,13 +544,14 @@ El ejecutable que se vigila sigue en `Executable`. Por ejemplo, una biblioteca l
 
 ### Qué archivos llevarte
 
-Extrae la entrega en la carpeta del repositorio. `_stick.csproj` debe quedar al mismo nivel que `App.xaml` y la carpeta `Assets`.
+Extrae la entrega en la raíz del repositorio y conserva la estructura. Dentro de `proyecto/`, `_stick.csproj` debe quedar al mismo nivel que `App.xaml` y la carpeta `assets/`.
 
 | Archivos | Por qué llevarlos |
 | --- | --- |
 | `_stick.csproj` | Visual Studio y .NET lo usan para abrir y compilar el proyecto. |
 | Todos los `.cs` y `.xaml` de la raíz del proyecto | Son el código y las ventanas. Mantén juntos los pares `.xaml` y `.xaml.cs`. |
-| `Assets/` completa | Conserva `stick.ico`, `Fonts/PixelifySans.ttf` y `Fonts/PixelifySans-OFL.txt` en sus rutas. |
+| `proyecto/assets/` completa | Conserva `stick.ico`, `fonts/PixelifySans.ttf` y `fonts/PixelifySans-OFL.txt` en sus rutas. |
+| `assets/` y `ejemplos_notas/` de la raíz | Contienen el material gráfico del README y las notas de muestra en Markdown. |
 | `.gitignore` | Indica a Git que ignore las carpetas de compilación y configuración local. |
 | `README.md` y esta guía | Explican el uso de la app y cómo continuar desarrollándola. |
 
@@ -559,7 +560,7 @@ Extrae la entrega en la carpeta del repositorio. `_stick.csproj` debe quedar al 
 ### Si todavía tienes que crear el repositorio
 
 1. Abre **GitHub Desktop**, inicia sesión y elige **File → New repository**. Escribe `_stick` y selecciona como ubicación la carpeta que contendrá el repositorio. Deja las opciones de README y plantilla de `.gitignore` sin seleccionar, porque la entrega ya incluye ambos archivos.
-2. Extrae el ZIP dentro de la carpeta `_stick` que crea GitHub Desktop. En **Changes**, comprueba que aparecen `_stick.csproj`, los archivos de código, `Assets` y la documentación.
+2. Extrae el ZIP dentro de la carpeta `_stick` que crea GitHub Desktop. En **Changes**, comprueba que aparecen `proyecto/_stick.csproj`, el código, los recursos, las notas de muestra y la documentación.
 3. Escribe un mensaje como **Primera entrega de _stick** y crea el commit. Un **commit** registra en Git una versión de los archivos.
 4. Pulsa **Publish repository** y elige si quieres que el repositorio sea privado o público. Tras publicarlo, podrás hacer tus cambios manuales en Visual Studio, crear un commit por cada cambio y usar **Push origin** para subirlo. [Crear y publicar un repositorio con GitHub Desktop](https://docs.github.com/en/desktop/overview/creating-your-first-repository-using-github-desktop)
 
@@ -570,5 +571,5 @@ En GitHub Desktop usa **File → Clone repository**, elige el repositorio y cló
 ### Comprobación final en la carpeta nueva
 
 1. Si la copia anterior de `_stick` está activa, abre el panel desde su icono en la bandeja y pulsa **Salir de _stick**.
-2. Abre el `_stick.csproj` de la carpeta nueva en Visual Studio y pulsa **F5**. Comprueba que aparecen el icono y la fuente pixelada en la ventana de aplicaciones.
+2. Abre `proyecto/_stick.csproj` de la copia nueva en Visual Studio y pulsa **F5**. Comprueba que aparecen el icono y la fuente pixelada en la ventana de aplicaciones.
 3. Prueba a renombrar una biblioteca y a cerrar y reabrir su aplicación. Si usabas **Iniciar _stick al entrar en Windows**, activa la casilla desde la nueva copia para que Windows use su ruta.
