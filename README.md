@@ -24,6 +24,7 @@
 | --- | --- |
 | [`_stick/proyecto/`](proyecto/) | Código fuente de la aplicación, ventanas WPF y archivos de compilación. El punto de entrada para abrir y compilar el código en Visual Studio es [`_stick.csproj`](proyecto/_stick.csproj). |
 | [`_stick/ejemplos_notas/`](ejemplos_notas/) | Notas de muestra en Markdown para ChatGPT, Chrome, Obsidian, PyCharm, Visual Studio Code y Windows. Se pueden copiar al editor de `_stick` para probar su formato y usarlas como punto de partida. |
+| [`_stick/guia/`](guia/) | Guía técnica en Markdown para seguir el código, entender sus componentes y localizar dónde se guardan los datos. |
 | [`_stick/assets/`](assets/) | Material gráfico del repositorio. El logo y las capturas de esta página están en [`assets/readme/`](assets/readme/). |
 
 Los recursos que usa la aplicación al ejecutarse (el icono y la fuente) están en [`proyecto/assets/`](proyecto/assets/), junto al código. Las notas personales se guardan en `%LOCALAPPDATA%\_stick`, fuera del repositorio.
@@ -180,7 +181,7 @@ Los datos se guardan por usuario en `%LOCALAPPDATA%\_stick`. `notes.json` contie
 
 ## Documentación
 
-La [guía técnica para Obsidian](<proyecto/Guia de _stick para Obsidian.md>) documenta las clases y los métodos, el ciclo de vida de las notas y el flujo de guardado. Incluye ejercicios de depuración y los pasos para trasladar el proyecto a otro repositorio.
+La [guía técnica](guia/guia-tecnica.md) explica cómo se conectan las ventanas, la detección de aplicaciones, la edición Markdown y el guardado. Cada apartado enlaza a los archivos del código que describe.
 
 ## _stick en uso
 
