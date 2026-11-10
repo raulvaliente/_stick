@@ -158,7 +158,7 @@ Los datos se guardan por usuario en `%LOCALAPPDATA%\_stick`. `notes.json` contie
 
 La [guía técnica](guia/guia-tecnica.md) explica cómo se conectan las ventanas, la detección de aplicaciones, la edición Markdown y el guardado. Cada apartado enlaza a los archivos del código que describe.
 
-## _stick en uso
+## En uso
 
 Una nota de la biblioteca de Visual Studio Code muestra una tabla de atajos junto al editor. El contenido de esta captura parte de las [notas de ejemplo](ejemplos_notas/).
 
