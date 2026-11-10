@@ -1,5 +1,5 @@
 <div align="center">
-  <h1><img src="assets/readme/stick-logo-portada.png" width="555" alt="_stick · Notas por aplicación"></h1>
+  <h1><img src="assets/readme/stick-logo-portada.png" width="100%" alt="_stick · Notas por aplicación"></h1>
   <p><strong>Notas de escritorio vinculadas a aplicaciones de Windows</strong></p>
   <p>C# · WPF · .NET 10</p>
   <p>
