@@ -27,8 +27,14 @@ internal sealed class Note
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public bool IsWelcome { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public bool IsMarkdownGuide { get; init; }
     public string Text { get; set; } = "";
     public string Color { get; set; } = "#FFF0AB";
     public double Width { get; set; } = DefaultSize;
     public double Height { get; set; } = DefaultSize;
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public int? Left { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public int? Top { get; set; }
 }

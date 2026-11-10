@@ -1,0 +1,143 @@
+<UserControl x:Class="_stick.MarkdownGuideView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             AutomationProperties.Name="Guía de Markdown de _stick"
+             FontFamily="{StaticResource InterfaceFont}" Foreground="#F4FFF5">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/_stick;component/PixelTheme.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <SolidColorBrush x:Key="Mint" Color="#BFE8C4"/>
+            <Style x:Key="Title" TargetType="TextBlock">
+                <Setter Property="FontFamily" Value="{StaticResource PixelFont}"/>
+                <Setter Property="FontSize" Value="22"/>
+                <Setter Property="Foreground" Value="{StaticResource Mint}"/>
+            </Style>
+            <Style x:Key="Body" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="LineHeight" Value="18"/>
+                <Setter Property="TextWrapping" Value="Wrap"/>
+            </Style>
+            <Style x:Key="Card" TargetType="Border">
+                <Setter Property="BorderBrush" Value="#516C60"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Background" Value="#2C3637"/>
+                <Setter Property="Padding" Value="12,9"/>
+            </Style>
+            <Style x:Key="Sample" TargetType="Border">
+                <Setter Property="Background" Value="#1D2429"/>
+                <Setter Property="BorderBrush" Value="#516C60"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Padding" Value="8,5"/>
+                <Setter Property="Margin" Value="0,6,0,0"/>
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Border Background="#222B2F" BorderBrush="#6B8F76" BorderThickness="2">
+        <Viewbox Stretch="Uniform" StretchDirection="DownOnly">
+            <Grid Width="756" Height="540" Background="#222B2F" UseLayoutRounding="True">
+                <Grid Margin="18,15">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="80"/>
+                        <RowDefinition Height="155"/>
+                        <RowDefinition Height="195"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <DockPanel Margin="0,0,0,10">
+                        <Border DockPanel.Dock="Left" Width="65" Height="65" Margin="0,0,12,0"
+                                Background="#32433E" BorderBrush="#516C60" BorderThickness="1">
+                            <Image Source="/_stick;component/Assets/stick.ico" Width="54" Height="54"
+                                   RenderOptions.BitmapScalingMode="NearestNeighbor" AutomationProperties.Name="Logo de _stick"/>
+                        </Border>
+                        <StackPanel>
+                            <TextBlock Text="GUÍA 02   /   EDICIÓN DE NOTAS" Style="{StaticResource Title}" FontSize="14"/>
+                            <TextBlock Text="Markdown en _stick" Style="{StaticResource Title}" FontSize="32"/>
+                            <TextBlock Text="Escribe los símbolos y mueve el cursor a otra línea para ver el formato."
+                                       Style="{StaticResource Body}" Margin="0,2,0,0"/>
+                        </StackPanel>
+                    </DockPanel>
+
+                    <Grid Grid.Row="1" Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Border Style="{StaticResource Card}">
+                            <StackPanel>
+                                <TextBlock Text="01   Formato rápido" Style="{StaticResource Title}"/>
+                                <Border Style="{StaticResource Sample}">
+                                    <StackPanel>
+                                        <TextBlock Text="# Título   **negrita**   *cursiva*" Style="{StaticResource Body}"/>
+                                        <TextBlock Text="~~tachado~~   ==resaltado==" Style="{StaticResource Body}"/>
+                                        <TextBlock Text="- [ ] Pendiente   - [x] Hecho" Style="{StaticResource Body}"/>
+                                    </StackPanel>
+                                </Border>
+                                <TextBlock Text="&gt; Cita     --- Separador" Style="{StaticResource Body}" Margin="0,5,0,0"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="2" Style="{StaticResource Card}">
+                            <StackPanel>
+                                <TextBlock Text="02   Selecciona y da formato" Style="{StaticResource Title}"/>
+                                <TextBlock Style="{StaticResource Body}" Margin="0,7,0,0">Selecciona palabras y haz <Bold>clic derecho</Bold>. <Bold>Formato</Bold> aplica estilos. <Bold>Insertar</Bold> añade tablas, enlaces y bloques de código.</TextBlock>
+                                <TextBlock Text="Ctrl + Z deshace el último cambio." Style="{StaticResource Body}" Margin="0,6,0,0"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <Grid Grid.Row="2" Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Border Style="{StaticResource Card}">
+                            <StackPanel>
+                                <TextBlock Text="03   Tablas" Style="{StaticResource Title}"/>
+                                <TextBlock Text="Separa las celdas con |. Debajo de los títulos añade una fila de guiones."
+                                           Style="{StaticResource Body}" Margin="0,6,0,0"/>
+                                <Border Style="{StaticResource Sample}">
+                                    <StackPanel>
+                                        <TextBlock Text="| Tarea  | Estado |" Style="{StaticResource Body}"/>
+                                        <TextBlock Text="| ------ | :----: |" Style="{StaticResource Body}"/>
+                                        <TextBlock Text="| Probar | Listo  |" Style="{StaticResource Body}"/>
+                                    </StackPanel>
+                                </Border>
+                                <TextBlock Style="{StaticResource Body}" Margin="0,5,0,0">En una línea vacía, escribe <Bold>|</Bold> y pulsa <Bold>Tab</Bold>.</TextBlock>
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="2" Style="{StaticResource Card}">
+                            <StackPanel>
+                                <TextBlock Text="04   Código" Style="{StaticResource Title}"/>
+                                <TextBlock Text="Un acento grave delimita código en línea. Tres abren y cierran un bloque."
+                                           Style="{StaticResource Body}" Margin="0,6,0,0"/>
+                                <Border Style="{StaticResource Sample}">
+                                    <StackPanel>
+                                        <TextBlock Text="&#96;&#96;&#96;python" Style="{StaticResource Body}"/>
+                                        <TextBlock Text="print(&quot;Hola, _stick&quot;)" Style="{StaticResource Body}"/>
+                                        <TextBlock Text="&#96;&#96;&#96;" Style="{StaticResource Body}"/>
+                                    </StackPanel>
+                                </Border>
+                                <TextBlock Style="{StaticResource Body}" Margin="0,5,0,0">Completa con <Bold>&#96;&#96;&#96;py</Bold> y luego <Bold>Intro</Bold>.</TextBlock>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <Border Grid.Row="3" Style="{StaticResource Card}">
+                        <DockPanel>
+                            <Button x:Name="CopyButton" DockPanel.Dock="Right" Content="Copiar ejemplo" Margin="12,0,0,0"
+                                    Background="{StaticResource Mint}" BorderBrush="{StaticResource Mint}"
+                                    Style="{StaticResource PrimaryButton}" VerticalAlignment="Center" Click="Copy_Click"/>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="SUGERENCIAS DE MARKDOWN" Style="{StaticResource Title}" FontSize="16"/>
+                                <TextBlock Text="Ctrl + Espacio abre la lista. Usa ↑ y ↓ para elegir, Tab o Intro para aceptar y Esc para cerrar."
+                                           Style="{StaticResource Body}" Margin="0,3,0,0"/>
+                            </StackPanel>
+                        </DockPanel>
+                    </Border>
+                </Grid>
+            </Grid>
+        </Viewbox>
+    </Border>
+</UserControl>

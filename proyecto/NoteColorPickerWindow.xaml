@@ -1,0 +1,123 @@
+<Window x:Class="_stick.NoteColorPickerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Color de la nota" Icon="/_stick;component/Assets/stick.ico"
+        Width="544" SizeToContent="Height" ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+        UseLayoutRounding="True" SnapsToDevicePixels="True"
+        Background="#211E2B" Foreground="#FFF8E6" FontFamily="{StaticResource InterfaceFont}">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/_stick;component/PixelTheme.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <DataTemplate x:Key="Swatch">
+                <Button Tag="{Binding}" ToolTip="{Binding}" AutomationProperties.Name="{Binding}"
+                        Width="43" Height="34" MinHeight="0" Padding="0" Margin="0,0,6,6"
+                        Background="{Binding}" Click="Swatch_Click" Style="{StaticResource PixelButton}"/>
+            </DataTemplate>
+            <ItemsPanelTemplate x:Key="SwatchPanel"><WrapPanel/></ItemsPanelTemplate>
+            <Style x:Key="PaletteHeading" TargetType="TextBlock">
+                <Setter Property="FontFamily" Value="{StaticResource PixelFont}"/>
+                <Setter Property="FontSize" Value="20"/>
+                <Setter Property="Foreground" Value="{StaticResource Paper}"/>
+                <Setter Property="Margin" Value="0,0,0,7"/>
+            </Style>
+            <Style x:Key="Channel" TargetType="Slider">
+                <Setter Property="Maximum" Value="255"/>
+                <Setter Property="IsSnapToTickEnabled" Value="True"/>
+                <Setter Property="LargeChange" Value="16"/>
+                <Setter Property="IsMoveToPointEnabled" Value="True"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <StackPanel Margin="18">
+        <Border Background="{StaticResource Yellow}" BorderBrush="#D19A42" BorderThickness="2" Padding="11,8">
+            <DockPanel>
+                <Image DockPanel.Dock="Left" Source="/_stick;component/Assets/stick.ico" Width="36" Height="36"
+                       Margin="0,0,10,0" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                <StackPanel TextElement.Foreground="{StaticResource Ink}">
+                    <TextBlock Text="Color de la nota" FontFamily="{StaticResource PixelFont}" FontSize="25"/>
+                    <TextBlock Text="Selecciona un tono o crea tu propia paleta." FontSize="13"/>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <TextBlock Text="Predeterminados" Style="{StaticResource PaletteHeading}" Margin="0,14,0,7"/>
+        <ItemsControl x:Name="Presets" ItemTemplate="{StaticResource Swatch}" ItemsPanel="{StaticResource SwatchPanel}"/>
+        <TextBlock Text="Mi paleta" Style="{StaticResource PaletteHeading}" Margin="0,7,0,7"/>
+        <TextBlock x:Name="EmptyPalette" Text="Guarda un color para reutilizarlo en otras notas."
+                   Foreground="{StaticResource Muted}" FontSize="13"/>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" MaxHeight="82">
+            <ItemsControl x:Name="Favorites" ItemTemplate="{StaticResource Swatch}" ItemsPanel="{StaticResource SwatchPanel}"/>
+        </ScrollViewer>
+
+        <Border Background="{StaticResource Panel}" BorderBrush="{StaticResource Outline}"
+                BorderThickness="1" Padding="12" Margin="0,12,0,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="14"/>
+                    <ColumnDefinition Width="150"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Text="Personalizar" Style="{StaticResource PaletteHeading}"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="58"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="36"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="23"/>
+                            <RowDefinition Height="23"/>
+                            <RowDefinition Height="23"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Rojo" VerticalAlignment="Center"/>
+                        <Slider x:Name="Red" Grid.Column="1" Style="{StaticResource Channel}"
+                                ValueChanged="Channels_Changed" AutomationProperties.Name="Rojo"/>
+                        <TextBlock Grid.Column="2" Text="{Binding Value, ElementName=Red, StringFormat=F0}"
+                                   HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="1" Text="Verde" VerticalAlignment="Center"/>
+                        <Slider x:Name="Green" Grid.Row="1" Grid.Column="1" Style="{StaticResource Channel}"
+                                ValueChanged="Channels_Changed" AutomationProperties.Name="Verde"/>
+                        <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding Value, ElementName=Green, StringFormat=F0}"
+                                   HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="2" Text="Azul" VerticalAlignment="Center"/>
+                        <Slider x:Name="Blue" Grid.Row="2" Grid.Column="1" Style="{StaticResource Channel}"
+                                ValueChanged="Channels_Changed" AutomationProperties.Name="Azul"/>
+                        <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding Value, ElementName=Blue, StringFormat=F0}"
+                                   HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    </Grid>
+                    <DockPanel Margin="0,8,0,0" LastChildFill="False">
+                        <TextBlock DockPanel.Dock="Left" Text="HEX" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                        <TextBox x:Name="Hex" DockPanel.Dock="Left" Width="94" MaxLength="7" Padding="6,4"
+                                 Background="#1B1824" Foreground="{StaticResource Paper}" CaretBrush="{StaticResource Paper}"
+                                 BorderBrush="{StaticResource Outline}" CharacterCasing="Upper"
+                                 AutomationProperties.Name="Color hexadecimal" TextChanged="Hex_Changed"/>
+                    </DockPanel>
+                    <TextBlock x:Name="HexError" Text="Introduce seis dígitos hexadecimales."
+                               Foreground="#FFB8AA" Visibility="Collapsed" Margin="0,4,0,0" TextWrapping="Wrap"/>
+                </StackPanel>
+
+                <Border x:Name="Preview" Grid.Column="2" BorderBrush="{StaticResource Outline}" BorderThickness="1">
+                    <StackPanel Margin="12,10">
+                        <TextBlock x:Name="PreviewTitle" Text="_stick" FontFamily="{StaticResource PixelFont}" FontSize="23"/>
+                        <TextBlock x:Name="PreviewText" Text="Así se verá tu nota." TextWrapping="Wrap" Margin="0,9,0,0"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <DockPanel Margin="0,12,0,0" LastChildFill="False">
+            <Button x:Name="SaveColor" Content="Guardar en mi paleta" DockPanel.Dock="Left"
+                    Style="{StaticResource PixelButton}" Click="SaveColor_Click"/>
+            <Button x:Name="ApplyColor" Content="Aplicar" DockPanel.Dock="Right" IsDefault="True"
+                    Style="{StaticResource PrimaryButton}" Click="Apply_Click"/>
+            <Button Content="Cancelar" DockPanel.Dock="Right" IsCancel="True" Margin="0,0,6,0"
+                    Style="{StaticResource PixelButton}"/>
+        </DockPanel>
+    </StackPanel>
+</Window>

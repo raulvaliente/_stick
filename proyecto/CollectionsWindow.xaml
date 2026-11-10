@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="_stick" Icon="/_stick;component/Assets/stick.ico"
-        Width="388" Height="536" WindowStyle="None" ResizeMode="NoResize"
+        Width="388" Height="560" WindowStyle="None" ResizeMode="CanMinimize"
         WindowStartupLocation="Manual" ShowInTaskbar="False" Topmost="True"
         PreviewKeyDown="Window_PreviewKeyDown" UseLayoutRounding="True" SnapsToDevicePixels="True"
         Background="#211E2B" Foreground="#FFF8E6" FontFamily="{StaticResource InterfaceFont}" FontSize="14">
@@ -37,6 +37,35 @@
                                 </Trigger>
                                 <Trigger Property="IsKeyboardFocused" Value="True">
                                     <Setter TargetName="Box" Property="BorderBrush" Value="#AD8DF2"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style x:Key="PixelSwitch" TargetType="CheckBox">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="CheckBox">
+                            <DockPanel Background="Transparent">
+                                <Border x:Name="Track" DockPanel.Dock="Left" Width="32" Height="18" Margin="0,0,9,0"
+                                        Padding="2" BorderBrush="{StaticResource Outline}" BorderThickness="2"
+                                        Background="{StaticResource Panel}">
+                                    <Rectangle x:Name="Thumb" Width="10" HorizontalAlignment="Left" Fill="{StaticResource Muted}"/>
+                                </Border>
+                                <ContentPresenter VerticalAlignment="Center"/>
+                            </DockPanel>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter TargetName="Track" Property="BorderBrush" Value="{StaticResource Yellow}"/>
+                                    <Setter TargetName="Thumb" Property="HorizontalAlignment" Value="Right"/>
+                                    <Setter TargetName="Thumb" Property="Fill" Value="{StaticResource Yellow}"/>
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Track" Property="BorderBrush" Value="{StaticResource Paper}"/>
+                                </Trigger>
+                                <Trigger Property="IsKeyboardFocused" Value="True">
+                                    <Setter TargetName="Track" Property="BorderBrush" Value="#AD8DF2"/>
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
@@ -198,10 +227,17 @@
                     <DockPanel>
                         <Button DockPanel.Dock="Right" Content="Papelera…" Style="{StaticResource PixelButton}"
                                 FontSize="16" MinHeight="32" Padding="7,4" Click="TrashSettings_Click"/>
-                        <CheckBox x:Name="Startup" Foreground="{StaticResource Paper}" VerticalAlignment="Center"
-                                  Style="{StaticResource PixelCheckBox}" Click="Startup_Click">
-                            <TextBlock Text="Iniciar con Windows" FontSize="13"/>
-                        </CheckBox>
+                        <StackPanel>
+                            <CheckBox x:Name="TaskbarIcon" Foreground="{StaticResource Paper}" Margin="0,0,0,6"
+                                      Style="{StaticResource PixelSwitch}" Click="TaskbarIcon_Click"
+                                      ToolTip="Mantiene _stick en la barra de tareas aunque ocultes el panel">
+                                <TextBlock Text="Icono en barra de tareas" FontSize="13"/>
+                            </CheckBox>
+                            <CheckBox x:Name="Startup" Foreground="{StaticResource Paper}"
+                                      Style="{StaticResource PixelCheckBox}" Click="Startup_Click">
+                                <TextBlock Text="Iniciar con Windows" FontSize="13"/>
+                            </CheckBox>
+                        </StackPanel>
                     </DockPanel>
                 </Border>
             </StackPanel>

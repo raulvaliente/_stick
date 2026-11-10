@@ -9,6 +9,8 @@ internal sealed class NoteViewModel(Note note, Action changed) : INotifyProperty
     public event PropertyChangedEventHandler? PropertyChanged;
 
     public bool IsWelcome => note.IsWelcome;
+    public bool IsMarkdownGuide => note.IsMarkdownGuide;
+    public bool IsTutorial => IsWelcome || IsMarkdownGuide;
     public double Width => note.Width;
     public double Height => note.Height;
 
@@ -26,21 +28,19 @@ internal sealed class NoteViewModel(Note note, Action changed) : INotifyProperty
         }
     }
 
-    public Brush Background => new SolidColorBrush(ReadColor());
+    public Color Color => ReadColor();
+    public Brush Background => new SolidColorBrush(Color);
+    public Brush Foreground => ContrastingForeground(Color);
 
-    public Brush Foreground
+    internal static Brush ContrastingForeground(Color color)
     {
-        get
-        {
-            var color = ReadColor();
-            var luminance = .2126 * Linear(color.R) + .7152 * Linear(color.G) + .0722 * Linear(color.B);
-            return luminance > .179 ? Brushes.Black : Brushes.White;
-        }
+        var luminance = .2126 * Linear(color.R) + .7152 * Linear(color.G) + .0722 * Linear(color.B);
+        return luminance > .179 ? Brushes.Black : Brushes.White;
     }
 
     public void SetColor(Color color)
     {
-        note.Color = color.ToString();
+        note.Color = $"#{color.R:X2}{color.G:X2}{color.B:X2}";
         PropertyChanged?.Invoke(this, new(nameof(Background)));
         PropertyChanged?.Invoke(this, new(nameof(Foreground)));
         changed();
@@ -53,6 +53,16 @@ internal sealed class NoteViewModel(Note note, Action changed) : INotifyProperty
 
         note.Width = width;
         note.Height = height;
+        changed();
+    }
+
+    public void SetPosition(int left, int top)
+    {
+        if (note.Left == left && note.Top == top)
+            return;
+
+        note.Left = left;
+        note.Top = top;
         changed();
     }
 

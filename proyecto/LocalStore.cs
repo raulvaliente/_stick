@@ -13,6 +13,45 @@ internal sealed class LocalStore(string filePath)
     private string AppPickerTutorialMarker => Path.Combine(Path.GetDirectoryName(filePath)!, "app-picker-tutorial.seen");
     private string TrashLayoutPath => Path.Combine(Path.GetDirectoryName(filePath)!, "trash-layout.json");
 
+    private string TaskbarIconPath => Path.Combine(Path.GetDirectoryName(filePath)!, "taskbar-icon.json");
+
+    public bool LoadTaskbarIcon()
+    {
+        try
+        {
+            using var file = File.OpenRead(TaskbarIconPath);
+            return JsonSerializer.Deserialize<bool>(file, Options);
+        }
+        catch (Exception error) when (error is FileNotFoundException or DirectoryNotFoundException)
+        {
+            return true;
+        }
+    }
+
+    public void SaveTaskbarIcon(bool visible) => SaveJson(TaskbarIconPath, visible);
+
+    private string PalettePath => Path.Combine(Path.GetDirectoryName(filePath)!, "colors.json");
+
+    public List<string> LoadPalette()
+    {
+        try
+        {
+            using var file = File.OpenRead(PalettePath);
+            var colors = JsonSerializer.Deserialize<List<string>>(file, Options);
+            if (colors is null || colors.Any(color => color is not { Length: 7 } || color[0] != '#'
+                    || !color.Skip(1).All(Uri.IsHexDigit)))
+                throw new JsonException("La paleta de colores no tiene el formato esperado.");
+
+            return colors.Select(color => color.ToUpperInvariant()).Distinct().ToList();
+        }
+        catch (Exception error) when (error is FileNotFoundException or DirectoryNotFoundException)
+        {
+            return [];
+        }
+    }
+
+    public void SavePalette(List<string> colors) => SaveJson(PalettePath, colors);
+
     public bool HasSeenAppPickerTutorial() => File.Exists(AppPickerTutorialMarker);
 
     public void MarkAppPickerTutorialSeen()

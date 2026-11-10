@@ -49,7 +49,7 @@
                      BorderThickness="0" Padding="2" AcceptsReturn="True"
                      TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"/>
             <local:MarkdownPreview x:Name="Preview" IsHitTestVisible="False"/>
-            <local:WelcomeNoteView x:Name="WelcomeGuide" Visibility="Collapsed"/>
+            <ContentControl x:Name="Tutorial" Visibility="Collapsed" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
         </Grid>
     </DockPanel>
     <Window.ContextMenu>

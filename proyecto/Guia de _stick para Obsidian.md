@@ -49,7 +49,7 @@ Un **proyecto** agrupa los archivos que se compilan juntos para producir una apl
 | `TrashSettingsWindow.xaml`, `TrashLayout.cs` y `TrashDropVisual.xaml` | Permiten ajustar la posición y el tamaño. El esquema y la papelera real usan el mismo cálculo de colocación y el mismo control visual. |
 | `Models.cs` | Contiene dos clases de datos, `Note` y `NoteCollection`. |
 | `NoteViewModel.cs` | Expone a la ventana el texto y los colores de una nota y avisa cuando cambian. |
-| `MarkdownLine.cs` y `MarkdownPreview.cs` | Interpretan Markdown básico y dibujan el formato sobre las líneas que quedan fuera de la edición activa. |
+| `MarkdownLine.cs` y `MarkdownPreview.cs` | Interpretan Markdown y dibujan el formato sobre las líneas que quedan fuera de la edición activa. |
 | `ExecutableHelpWindow.xaml` y `ExecutableHelpWindow.xaml.cs` | Contienen la guía que se abre al pulsar **Ayuda** junto a **Añadir aplicación…**. |
 | `LocalStore.cs` | Convierte las colecciones a un archivo JSON y las recupera al arrancar. |
 | `ProcessMonitor.cs` | Consulta qué ejecutables están activos en tu sesión de Windows. |
@@ -130,10 +130,10 @@ Las dos clases están en `Models.cs`. Se llaman **modelos** porque representan l
 | Propiedad | Qué guarda |
 | --- | --- |
 | `Text` | El texto de la nota. Al crearla empieza como una cadena vacía, `""`. |
-| `Color` | El color en forma de texto hexadecimal. El valor inicial `#FFF0AB` representa un amarillo claro. En `#RRGGBB` cada pareja corresponde a rojo, verde y azul. El selector guarda el formato `#AARRGGBB`, que añade delante la opacidad. `FF` en esa primera pareja indica un color opaco. |
+| `Color` | El color en forma de texto hexadecimal. El valor inicial `#FFF0AB` representa un amarillo claro. En `#RRGGBB` cada pareja corresponde a rojo, verde y azul. El selector guarda `#RRGGBB`. La lectura también admite el formato anterior `#AARRGGBB`, que añade la opacidad. |
 | `Width` y `Height` | Ancho y alto de la última ventana guardada. Ambos toman `Note.DefaultSize` (240) en notas nuevas y en archivos anteriores que aún carecen de estas propiedades. |
 
-`Note` usa el constructor vacío que proporciona C#. Al volver a mostrar una nota, se recupera su tamaño y `App` calcula una posición para su nueva ventana.
+`Left` y `Top` guardan la esquina de la ventana en píxeles del escritorio. En las notas antiguas faltan esos campos, así que `App` calcula una posición inicial. Al reabrir una nota con posición guardada, `NoteWindow` la ajusta al área de trabajo del monitor disponible.
 
 ### NoteCollection
 
@@ -262,7 +262,10 @@ Este archivo es el **code-behind**, la parte C# asociada al XAML que responde a 
 | `New_Click(sender, e)` | Al pulsar **+**, ejecuta `addNote()`. La función fue creada en `App.ShowNote()` con la colección concreta que corresponde a esa ventana. |
 | `Hide_Click(sender, e)` | Al pulsar **×**, llama a `Close()`, heredado de `Window`. Se destruye esa ventana y se conserva el objeto `Note` dentro de su colección. |
 | `Delete_Click(sender, e)` | Pide confirmación para enviar la nota a la papelera y llama a `deleteNote()` al aceptar. El guardado se hace en `App.DeleteNote()`. |
-| `Color_Click(sender, e)` | Lee el color actual del pincel, lo convierte al tipo `System.Drawing.Color` que usa el diálogo de Windows Forms y lo pone como color inicial. `FullOpen` abre las opciones de color personalizado. Si aceptas, convierte los componentes rojo, verde y azul de vuelta a un `Color` de WPF y llama a `viewModel.SetColor(...)`. |
+| `Color_Click(sender, e)` | Abre `NoteColorPickerWindow` con el color actual. Al pulsar **Aplicar**, asigna el color elegido al modelo de vista. |
+| `PlaceBeside(parent, occupied)` | Busca un hueco a la izquierda o a la derecha de la nota original, con un margen respecto a las ventanas abiertas. Si los laterales están llenos, prueba arriba o abajo. |
+| `TrackPosition(savedLeft, savedTop)` | Recupera las coordenadas guardadas y escucha `LocationChanged`. `RememberPosition()` guarda la posición de la ventana en píxeles y `SetPosition()` pide el guardado diferido. |
+| `NoteColorPickerWindow` | Muestra colores predeterminados, muestras de **Mi paleta**, controles RGB, un campo HEX y una vista previa. **Guardar en mi paleta** conserva la muestra en `colors.json` para reutilizarla aunque se cierre el selector o la aplicación. |
 | `CursorOnScreen()` | Lee la posición del puntero en píxeles de pantalla. |
 | `Header_DragStarted(sender, e)` y `StartDrag(withControl)` | Leen Ctrl al comenzar y registran el origen del puntero y la posición de cada ventana que se va a mover. |
 | `Header_DragDelta(sender, e)` y `MoveDrag(cursor)` | Calculan el desplazamiento respecto al origen y lo aplican a la nota o a las ventanas visibles de su biblioteca. El arrastre individual muestra la papelera al superar el umbral de movimiento. |
@@ -287,9 +290,9 @@ Este archivo es el **code-behind**, la parte C# asociada al XAML que responde a 
 
 ## 8. CollectionsWindow
 
-`OpenSettings()` crea el panel si está cerrado o lo trae al frente si ya existe. También muestra las notas guardadas en la biblioteca `_stick` al abrir el panel. El evento `Closed` libera la referencia al panel. Las notas siguen abiertas y el icono permanece en la bandeja. **Salir de _stick** guarda los cambios y cierra la aplicación completa.
+`OpenSettings()` crea el panel si está cerrado o lo trae al frente si ya existe. También muestra las notas guardadas en la biblioteca `_stick` al abrir el panel. Con **Icono en barra de tareas** activado, cerrar el panel lo minimiza y se puede restaurar desde el icono. Si se desactiva, el evento `Closed` libera la referencia al panel y la bandeja permite abrirlo de nuevo. Las notas siguen abiertas en ambos modos. **Salir de _stick** guarda los cambios y cierra la aplicación completa.
 
-`NoteWindow()` lee `NoteViewModel.IsWelcome`. Cuando el valor es verdadero, muestra `WelcomeNoteView` en lugar del editor. El constructor de `WelcomeNoteView` llama a `InitializeComponent()` para cargar el tutorial en XAML. Sus títulos usan Pixelify Sans y el cuerpo usa Consolas. Las figuras XAML dibujan las viñetas en píxeles. Un `Viewbox` reduce la guía entera si dispone de poco espacio, manteniendo las proporciones y todos los pasos visibles. El tutorial comparte con cualquier nota los controles de ocultar y de mover a la papelera.
+`NoteWindow()` lee `NoteViewModel.IsTutorial`. Las dos guías ocupan la misma zona del post-it. La amarilla usa `WelcomeNoteView` y la verde usa `MarkdownGuideView`. El constructor de `WelcomeNoteView` llama a `InitializeComponent()` para cargar el tutorial en XAML. Sus títulos usan Pixelify Sans y el cuerpo usa Consolas. Las figuras XAML dibujan las viñetas en píxeles. Un `Viewbox` reduce la guía entera si dispone de poco espacio, manteniendo las proporciones y todos los pasos visibles. El tutorial comparte con cualquier nota los controles de ocultar y de mover a la papelera.
 
 ### CollectionsWindow.xaml
 
@@ -319,6 +322,8 @@ El `Grid` divide el panel en una cabecera con el logo y el cierre, una zona cent
 | `Rename_Click(sender, e)` | Obtiene la colección seleccionada y abre `CollectionNameWindow` con su nombre personalizado y el nombre del ejecutable como respaldo. Si se confirma, pasa el texto a `App.RenameCollection()`. Cuando el cambio se guarda, `Refresh()` vuelve a dibujar la fila y conserva la selección. |
 | `Open_Click(sender, e)` | Pide a `App` que abra la colección seleccionada y active su primera nota. |
 | `Toggle_Click(sender, e)` | Pide a `App` que invierta el valor de `Automatic`. Si se guarda, actualiza la fila y el texto del botón. |
+| `TaskbarIcon_Click(sender, e)` | Guarda la preferencia mediante `App.SetTaskbarIcon()` y actualiza `ShowInTaskbar`. Si el guardado falla, devuelve el interruptor a su estado anterior. |
+| `OnClosing(e)` | Con el icono en la barra de tareas, convierte el cierre del panel en una minimización. **Salir de _stick** permite el cierre real. |
 | `Startup_Click(sender, e)` | Lee si se marcó o desmarcó la casilla y se lo pasa a `SetStartup()`. Si falla, restaura visualmente el estado anterior. |
 | `PickExecutable(currentExecutable = null)` | Abre `AppPickerWindow` como diálogo. Devuelve la ruta seleccionada si se confirma y `null` si se cancela. Para sustituir una asociación, recibe la ruta actual como parámetro. |
 | `Refresh(collection)` | Vuelve a dibujar los elementos, selecciona la colección indicada y actualiza las propiedades de selección. El origen de datos es una `List<T>` y las colecciones son objetos de datos sencillos, por eso la ventana solicita el refresco explícitamente tras estos cambios. |
@@ -390,6 +395,7 @@ El archivo `CollectionNameWindow.xaml` declara el campo de nombre y los botones 
 | `QueueOpenSettings()` | Pone la apertura del panel en la cola de WPF. La usan el clic en la bandeja y la señal que recibe la primera instancia al volver a ejecutar `_stick.exe`. |
 | `RequestExit()` | Responde al botón **Salir de _stick** del panel. Llama a `Shutdown()` cuando `Flush()` confirma el guardado. |
 | `OpenSettings(focusWelcome = false)` | Si el panel existe, lo activa. Si está cerrado, lo crea abajo a la derecha y muestra las notas de la biblioteca propia. El parámetro permite dar el foco a la guía al arrancar. |
+| `SetTaskbarIcon(visible)` | Guarda la preferencia en `taskbar-icon.json`, junto al archivo de notas. `LocalStore.LoadTaskbarIcon()` devuelve `true` si todavía no existe una preferencia guardada. |
 | `StartupCommand` | Propiedad que construye el comando para iniciar `_stick` con Windows. Pone la ruta del ejecutable entre comillas y conserva `--background` para reconocer los registros de versiones anteriores. El panel se abre al arrancar. |
 | `IsStartupEnabled()` | Lee el valor `_stick` en la clave `Run` del **Registro** del usuario actual. El Registro es un almacén de configuración de Windows. La casilla se marca si la entrada coincide con el comando de la copia actual. Si hay un error de acceso previsto, avisa y devuelve `false`. |
 | `SetStartup(enabled)` | Abre la clave con permiso de escritura. Al activar la opción comprueba el límite de longitud del comando y escribe el valor. Al desactivar, borra ese valor si existe. Devuelve si tuvo éxito. Si falla, muestra un mensaje para que la ventana pueda restaurar el estado de la casilla. |
@@ -409,6 +415,8 @@ El archivo `CollectionNameWindow.xaml` declara el campo de nombre y los botones 
 | `ToggleAutomatic(collection)` | Invierte `Automatic` y guarda. Si falla, restaura el estado anterior. Si tiene éxito, borra el seguimiento de esa ruta. La pausa deja las ventanas existentes abiertas y suspende ambas acciones automáticas. Al reactivar, un proceso ya abierto puede detectarse en la siguiente comprobación. |
 | `BuiltInCollection` | Localiza la primera colección marcada con `IsBuiltIn`. |
 | `EnsureBuiltInCollection()` | Si falta esa colección, la crea al principio de la lista con una nota marcada `IsWelcome`. La colección se guarda aunque se envíen todas sus notas a la papelera, de modo que el tutorial se crea una sola vez. |
+| `NotesToOpen(collection)` | Mantiene la guía de Markdown detrás de la bienvenida amarilla durante el recorrido inicial. |
+| `RevealMarkdownGuide(collection, welcome)` | Al cerrar la bienvenida, abre la guía verde en la misma posición si sigue en la biblioteca. |
 | `Scan()` | Selecciona las colecciones vinculadas que tienen la detección automática activa y consulta al monitor. Si la consulta general falla con una excepción prevista, conserva el seguimiento anterior. Si tiene éxito, compara los PIDs actuales con los anteriores. Si aparecen procesos nuevos y no queda ninguno anterior, llama a `OpenCollection()`. Si antes había procesos y ahora no queda ninguno, llama a `CloseCollection()`. |
 | `OpenCollection(collection, activate = false)` | Si no hay notas, intenta crear la primera. Si las hay, pide que se muestre cada una. `activate` es opcional y vale `false` cuando la apertura se debe a la detección automática. Al abrir a mano, se intenta activar la primera ventana. |
 
@@ -423,7 +431,7 @@ El código usa `ids.Overlaps(previousIds)` para preguntar si los conjuntos compa
 | `DeleteNote(collection, note)` | Mueve la nota de `Notes` a `TrashedNotes` e intenta guardar. Si falla, la devuelve a su posición anterior. Si se guarda, cierra la ventana de la nota. |
 | `RestoreLastNote(collection)` | Devuelve la última nota retirada a la lista activa, guarda el cambio y abre su ventana. Si falla el guardado, la nota vuelve a la papelera. |
 | `GetOpenNotes(collection)` | Reúne las ventanas abiertas de la biblioteca para que el arrastre con Ctrl pueda moverlas juntas. |
-| `ShowNote(collection, note, activate)` | Busca la ventana en `openNotes`. Si falta, construye el modelo de vista, le pasa `QueueSave` y crea la ventana con las funciones de añadir y eliminar. Calcula la posición, registra la ventana y la muestra. Cuando la ventana se cierra, el manejador la quita de `openNotes` y pide guardar lo pendiente. Si la ventana ya existía, puede activarla sin crear otra. |
+| `ShowNote(collection, note, activate)` | Busca la ventana en `openNotes`. Si falta, construye el modelo de vista, le pasa `QueueSave` y crea la ventana con las funciones de añadir y eliminar. Calcula una posición inicial, registra la ventana y la muestra. `TrackPosition()` recupera la posición guardada y sigue los movimientos. Cuando la ventana se cierra, el manejador la quita de `openNotes` y pide guardar lo pendiente. Si la ventana ya existía, puede activarla sin crear otra. |
 | `PlaceNote(window, isWelcome)` | Usa el área de trabajo de la pantalla principal, que deja fuera espacios reservados como la barra de tareas. Si la nota es la de bienvenida, centra su ventana en el área de trabajo. Calcula filas y columnas y prueba huecos desde la derecha. `Rect` representa un rectángulo y `IntersectsWith` indica si se cruza con otra ventana de nota abierta. Si todos los huecos están ocupados, desplaza un poco la nueva ventana para formar una cascada. |
 
 ### Guardado automático y errores
@@ -470,7 +478,7 @@ sequenceDiagram
     A->>S: Save con todas las colecciones
 ```
 
-Si eliges un color, el recorrido empieza en `NoteWindow.Color_Click()`. `NoteViewModel.SetColor()` modifica `Note.Color`, avisa a la vista para que se repinte y solicita el mismo guardado. Si cierras la nota antes de que venza el temporizador, su evento `Closed` llama a `Flush()` e intenta guardar en ese momento.
+Si eliges un color, el recorrido empieza en `NoteWindow.Color_Click()`. El botón **+** de una nota transmite su color y su posición inicial a `App.AddNote()`. La nueva nota se coloca al lado y busca un hueco libre para evitar que se solapen. `NoteViewModel.SetColor()` modifica `Note.Color`, avisa a la vista para que se repinte y solicita el mismo guardado. Si cierras la nota antes de que venza el temporizador, su evento `Closed` llama a `Flush()` e intenta guardar en ese momento.
 
 ### C. Ocultas una nota y luego la envías a la papelera
 
@@ -500,12 +508,24 @@ Un segundo ejercicio es poner el punto en `App.OpenCollection()` y abrir la mism
 | --- | --- |
 | `MarkdownStyle` | Enumera los estilos de texto. `[Flags]` permite combinar valores como negrita y cursiva. |
 | `MarkdownPart` | Guarda un fragmento que se puede dibujar, junto con su estilo y su posición dentro del texto original. |
-| `MarkdownLine(start, end, headingLevel, parts)` | Guarda los límites de la línea en el texto, el nivel del encabezado y los fragmentos que se van a dibujar. Un nivel de cero indica una línea sin encabezado. |
-| `MarkdownLine.Parse(source)` | Recorre el texto por líneas y devuelve las que llevan formato. Dentro de un bloque delimitado con tres o más comillas invertidas o tildes, conserva el contenido como texto. |
-| `MarkdownLine.ParseLine(line, start)` | Reconoce títulos, listas, énfasis y código en línea. `AddPlain()` añade un fragmento normal y `AddStyled()` añade el contenido de una coincidencia de Markdown con el estilo correspondiente. |
-| `MarkdownPreview.Attach(textBox)` | Se suscribe a cambios de texto, selección, foco, tamaño y desplazamiento. Llama a `InvalidateVisual()` para pedir a WPF que vuelva a dibujar la vista. |
+| `MarkdownLine` | Guarda los límites de la línea, su tipo de bloque y los fragmentos que se dibujan. Una fila de tabla también incluye sus celdas y alineaciones. |
+| `MarkdownLine.Parse(source)` | Recorre el texto por líneas y reconoce tablas mediante la cabecera y su fila de separadores. Dentro de un bloque delimitado con acentos graves o tildes, conserva el contenido como texto literal. |
+| `MarkdownLine.ParseLine(line, start)` | Reconoce títulos, listas, tareas, citas y separadores. `ParseInline()` añade los fragmentos de negrita, cursiva, tachado, resaltado, código y enlaces. |
+| `MarkdownPreview.Attach(textBox)` | Se suscribe a cambios de texto, selección, foco, tamaño y desplazamiento. Solicita el redibujado después de que WPF recalcule las filas visuales del editor. |
 | `MarkdownPreview.OnRender(drawingContext)` | Reutiliza el análisis mientras el texto siga igual y recorre las filas visibles del editor. Omite la línea lógica que contiene el cursor cuando estás escribiendo. Mientras hay una selección activa, deja a la vista el texto original. |
 | `MarkdownPreview.DrawRow(...)` | Dibuja el fondo y los fragmentos formateados que corresponden a una fila visual. Conserva los saltos de línea calculados por el editor, de forma que las líneas siguientes se mantienen en su sitio al mover el cursor. |
+
+`MarkdownEditing` instala el menú contextual y el autocompletado en el `TextBox`. Cada acción edita el Markdown fuente.
+
+| Método | Qué hace |
+| --- | --- |
+| `BuildContextMenu()` | Agrupa las acciones en **Formato** e **Insertar** y conecta los comandos de copiar, cortar y pegar con el editor. |
+| `UpdateSuggestions(manual)` | Lee lo escrito antes del cursor. Elige las sugerencias para el marcador detectado y evita abrirlas dentro de un bloque de código. `Ctrl + Espacio` permite pedir la lista. |
+| `EditorKeyDown(...)` | Mueve la selección con las flechas, inserta la plantilla con **Tab** o **Intro** y cierra la lista con **Esc**. |
+| `WrapInline(marker)` y `PrefixLines(prefix)` | Añaden o quitan los marcadores alrededor de la selección o al principio de sus líneas. |
+| `InsertCode(language)` | Rodea la selección con un bloque de código. Si la selección contiene acentos graves, usa un delimitador más largo para conservar el contenido. |
+| `InsertAt(...)` y `Replace(...)` | Ajustan los saltos de línea para insertar bloques y agrupan cada edición en una sola operación de deshacer. |
+
 
 ## 13. Cómo se renombra una biblioteca
 

@@ -19,6 +19,8 @@ public partial class CollectionsWindow : Window, INotifyPropertyChanged
         Collections.ItemsSource = app.Collections;
         Collections.SelectedIndex = 0;
         Startup.IsChecked = app.IsStartupEnabled();
+        TaskbarIcon.IsChecked = app.ShowTaskbarIcon;
+        ShowInTaskbar = app.ShowTaskbarIcon;
         app.TrashChanged += OnTrashChanged;
     }
 
@@ -28,6 +30,16 @@ public partial class CollectionsWindow : Window, INotifyPropertyChanged
     public bool CanRestore => Selected?.TrashedNotes.Count > 0;
     public bool HasExternalSelection => Selected is { IsBuiltIn: false };
     public string AutomaticAction => Selected?.Automatic == false ? "Activar detección" : "Pausar detección";
+
+    protected override void OnClosing(CancelEventArgs e)
+    {
+        base.OnClosing(e);
+        if (!e.Cancel && ShowInTaskbar && !app.IsExiting)
+        {
+            e.Cancel = true;
+            WindowState = WindowState.Minimized;
+        }
+    }
 
     protected override void OnClosed(EventArgs e)
     {
@@ -118,6 +130,15 @@ public partial class CollectionsWindow : Window, INotifyPropertyChanged
         var enabled = Startup.IsChecked == true;
         if (!app.SetStartup(enabled))
             Startup.IsChecked = !enabled;
+    }
+
+    private void TaskbarIcon_Click(object sender, RoutedEventArgs e)
+    {
+        var visible = TaskbarIcon.IsChecked == true;
+        if (app.SetTaskbarIcon(visible))
+            ShowInTaskbar = visible;
+        else
+            TaskbarIcon.IsChecked = app.ShowTaskbarIcon;
     }
 
     private void TrashSettings_Click(object sender, RoutedEventArgs e) =>

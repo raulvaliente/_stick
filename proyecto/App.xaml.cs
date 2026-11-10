@@ -35,7 +35,42 @@ public partial class App : Application
 
     internal List<NoteCollection> Collections { get; private set; } = [];
     internal TrashLayout TrashLayout { get; private set; } = new();
+    internal bool ShowTaskbarIcon { get; private set; } = true;
+    internal bool IsExiting { get; private set; }
     internal event EventHandler? TrashChanged;
+
+    private List<string> palette = [];
+
+    private bool SavePaletteColor(string color)
+    {
+        var updated = new List<string>(palette) { color };
+        try
+        {
+            store.SavePalette(updated);
+            palette = updated;
+            return true;
+        }
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException)
+        {
+            NotifyError("No se pudo guardar el color en la paleta.", error);
+            return false;
+        }
+    }
+
+    internal bool SetTaskbarIcon(bool visible)
+    {
+        try
+        {
+            store.SaveTaskbarIcon(visible);
+            ShowTaskbarIcon = visible;
+            return true;
+        }
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException)
+        {
+            NotifyError("No se pudo guardar la visibilidad del icono en la barra de tareas.", error);
+            return false;
+        }
+    }
 
     internal bool SetTrashLayout(TrashLayout layout)
     {
@@ -105,6 +140,24 @@ public partial class App : Application
             NotifyError("Se usará la configuración predeterminada de la papelera.", error);
         }
 
+        try
+        {
+            ShowTaskbarIcon = store.LoadTaskbarIcon();
+        }
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException or JsonException)
+        {
+            NotifyError("Se mostrará el icono en la barra de tareas.", error);
+        }
+
+        try
+        {
+            palette = store.LoadPalette();
+        }
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException or JsonException)
+        {
+            NotifyError("No se pudo cargar la paleta de colores.", error);
+        }
+
         saveTimer.Tick += (_, _) => Flush();
         EnsureBuiltInCollection();
         monitor = new ProcessMonitor();
@@ -138,16 +191,24 @@ public partial class App : Application
 
     private void EnsureBuiltInCollection()
     {
-        if (BuiltInCollection is not null)
+        var builtIn = BuiltInCollection;
+        if (builtIn is null)
+        {
+            builtIn = new NoteCollection
+            {
+                Executable = "",
+                IsBuiltIn = true,
+                Automatic = false,
+                Notes = [new Note { IsWelcome = true, Color = "#FFE275" }]
+            };
+            Collections.Insert(0, builtIn);
+        }
+
+        if (builtIn.Notes.Any(note => note.IsMarkdownGuide) || builtIn.TrashedNotes.Any(note => note.IsMarkdownGuide))
             return;
 
-        Collections.Insert(0, new NoteCollection
-        {
-            Executable = "",
-            IsBuiltIn = true,
-            Automatic = false,
-            Notes = [new Note { IsWelcome = true, Color = "#FFE275" }]
-        });
+        var welcomeIndex = builtIn.Notes.FindIndex(note => note.IsWelcome);
+        builtIn.Notes.Insert(welcomeIndex + 1, new Note { IsMarkdownGuide = true, Color = "#BFE8C4" });
 
         if (!TrySave())
             dirty = true;
@@ -263,11 +324,12 @@ public partial class App : Application
             return;
         }
 
-        foreach (var note in collection.Notes)
+        var notes = NotesToOpen(collection).ToArray();
+        foreach (var note in notes)
             ShowNote(collection, note, activate: false);
 
-        if (activate)
-            openNotes[collection.Notes[0]].Activate();
+        if (activate && notes.Length > 0)
+            openNotes[notes[0]].Activate();
     }
 
     internal bool IsStartupEnabled()
@@ -335,14 +397,19 @@ public partial class App : Application
 
     internal void RequestExit()
     {
-        if (Flush())
-            Shutdown();
+        if (!Flush())
+            return;
+
+        IsExiting = true;
+        Shutdown();
     }
 
     private void OpenSettings(bool focusWelcome = false)
     {
         if (settings is not null)
         {
+            if (settings.WindowState == WindowState.Minimized)
+                settings.WindowState = WindowState.Normal;
             settings.Activate();
             return;
         }
@@ -358,10 +425,12 @@ public partial class App : Application
 
         panel.Show();
         if (BuiltInCollection is { } builtIn)
-            foreach (var note in builtIn.Notes)
+            foreach (var note in NotesToOpen(builtIn))
                 ShowNote(builtIn, note, activate: false);
 
-        var welcome = focusWelcome ? BuiltInCollection?.Notes.FirstOrDefault(note => note.IsWelcome) : null;
+        var welcome = focusWelcome && BuiltInCollection is { } ownCollection
+            ? NotesToOpen(ownCollection).FirstOrDefault(note => note.IsWelcome || note.IsMarkdownGuide)
+            : null;
         if (welcome is not null && openNotes.TryGetValue(welcome, out var welcomeWindow))
             welcomeWindow.Activate();
         else
@@ -406,12 +475,15 @@ public partial class App : Application
                 window.Close();
     }
 
-    private void AddNote(NoteCollection collection, bool activate)
+    private void AddNote(NoteCollection collection, bool activate, Note? source = null)
     {
         var note = new Note();
+        if (source is not null)
+            note.Color = source.Color;
+
         collection.Notes.Add(note);
         if (TrySave())
-            ShowNote(collection, note, activate);
+            ShowNote(collection, note, activate, source);
         else
             collection.Notes.Remove(note);
     }
@@ -462,25 +534,71 @@ public partial class App : Application
             .Select(note => openNotes[note])
             .ToArray();
 
-    private void ShowNote(NoteCollection collection, Note note, bool activate)
+    private IEnumerable<Note> NotesToOpen(NoteCollection collection)
+    {
+        if (!collection.IsBuiltIn)
+            return collection.Notes;
+
+        var showingMarkdown = collection.Notes.Any(note => note.IsMarkdownGuide && openNotes.ContainsKey(note));
+        return showingMarkdown
+            ? collection.Notes.Where(note => !note.IsWelcome)
+            : collection.Notes.Any(note => note.IsWelcome)
+                ? collection.Notes.Where(note => !note.IsMarkdownGuide)
+                : collection.Notes;
+    }
+
+    private void RevealMarkdownGuide(NoteCollection collection, Note welcome)
+    {
+        if (IsExiting || openNotes.ContainsKey(welcome))
+            return;
+
+        var guide = collection.Notes.FirstOrDefault(note => note.IsMarkdownGuide);
+        if (guide is null || openNotes.ContainsKey(guide))
+            return;
+
+        guide.Left = welcome.Left;
+        guide.Top = welcome.Top;
+        QueueSave();
+        ShowNote(collection, guide, activate: true);
+    }
+
+    private void ShowNote(NoteCollection collection, Note note, bool activate, Note? source = null)
     {
         if (!openNotes.TryGetValue(note, out var window))
         {
             window = new NoteWindow(collection.Name, new NoteViewModel(note, QueueSave),
-                () => AddNote(collection, activate: true), () => DeleteNote(collection, note),
-                () => GetOpenNotes(collection), () => TrashLayout);
-            PlaceNote(window, note.IsWelcome);
+                () => AddNote(collection, activate: true, source: note), () => DeleteNote(collection, note),
+                () => GetOpenNotes(collection), () => TrashLayout, PickNoteColor);
+            PlaceNote(window, note.IsWelcome || note.IsMarkdownGuide);
             window.Closed += (_, _) =>
             {
                 openNotes.Remove(note);
                 Flush();
+                if (collection.IsBuiltIn && note.IsWelcome && !IsExiting)
+                    Dispatcher.InvokeAsync(() => RevealMarkdownGuide(collection, note), DispatcherPriority.Background);
             };
             openNotes.Add(note, window);
             window.Show();
+            if (source is not null && openNotes.TryGetValue(source, out var parent))
+            {
+                IEnumerable<Window> occupied = openNotes.Values;
+                if (settings is { IsVisible: true, WindowState: WindowState.Normal })
+                    occupied = occupied.Append(settings);
+
+                window.PlaceBeside(parent, occupied);
+            }
+
+            window.TrackPosition(note.Left, note.Top);
         }
 
         if (activate)
             window.Activate();
+    }
+
+    private System.Windows.Media.Color? PickNoteColor(NoteWindow owner)
+    {
+        var picker = new NoteColorPickerWindow(owner.NoteColor, palette, SavePaletteColor) { Owner = owner };
+        return picker.ShowDialog() == true ? picker.SelectedColor : null;
     }
 
     private void PlaceNote(NoteWindow window, bool isWelcome)
